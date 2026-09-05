@@ -81,6 +81,13 @@ Licensing: skipped for now; the mod will be shown to the Bugatti and Solsector a
 - Translocator uses the vanilla Janus Device icon (graphics/icons/cargo/janus_device.png) until the user draws one.
 - Another installed mod injects a "Meet $himOrHer in person" option into every person conversation; not ours, harmless.
 
+## Round 6: playtest 2 (user, 2026-09-05, v0.3.2)
+- Quest confirmed working end to end: bar lead -> conversation -> device -> signal -> Sol spawns mid-game and is enterable.
+- The translocator could still be sold. `no_sell` only stops markets stocking an item; the tag that actually locks a
+  special item inside the player fleet (no sell, no drop) is `mission_item`, same as the vanilla Janus Device,
+  Planetkiller and Wormhole Scanner. Added it; the cargo tooltip now reads "Can not remove item" by itself.
+- Crisis still untested. User suspects the 12 ly base-spawn radius is too wide but asked for NO change until they test.
+
 ## Implementation notes (v0.1.0)
 - Kotlin + gradle, same setup as Intel Renewed. `./gradlew jar` then `python package.py`.
 - Sol id: system named "Sol" with memory flag `$sr_sol`; `SolSystem.find()` locates it.

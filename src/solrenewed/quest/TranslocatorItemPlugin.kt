@@ -14,6 +14,6 @@ class TranslocatorItemPlugin : BaseSpecialItemPlugin() {
 
     override fun createTooltip(tooltip: TooltipMakerAPI, expanded: Boolean, transferHandler: CargoTransferHandlerAPI?, stackSource: Any?, useGray: Boolean) {
         super.createTooltip(tooltip, expanded, transferHandler, stackSource, useGray)
-        tooltip.addPara("Cannot be sold. Activate it on top of the signal Glasya-Labolas gave you the coordinates for.", Misc.getHighlightColor(), 10f)
+        tooltip.addPara("Activate it while sitting directly on top of the coordinates Glasya-Labolas gave you.", Misc.getHighlightColor(), 10f)
     }
 }
