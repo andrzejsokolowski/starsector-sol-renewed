@@ -1,0 +1,77 @@
+[center][img]https://github.com/andrzejsokolowski/starsector-sol-renewed/blob/main/sol-renewed-icon.png?raw=true[/img][/center]
+[center][size=28pt][url=https://github.com/andrzejsokolowski/starsector-sol-renewed/releases/latest][b]Sol Renewed[/b][/url][/size]
+[url=https://github.com/andrzejsokolowski/starsector-sol-renewed/releases/latest][img]https://img.shields.io/github/downloads/andrzejsokolowski/starsector-sol-renewed/total?style=for-the-badge&label=download[/img][/url]  [url=https://github.com/andrzejsokolowski/starsector-sol-renewed][img]https://img.shields.io/github/v/release/andrzejsokolowski/starsector-sol-renewed?display_name=tag&sort=semver&style=for-the-badge&label=source[/img][/url]
+[/center]
+[center][b]
+WHAT DOES THIS MOD DO?
+- Adds Sol: the eight planets, Pluto, and the moons that matter, sized and spaced so you can actually fly across it.
+
+
+
+Sol is not on the map when you start a game. There is a quest to go and find it, and drag it into the Persean Sector.
+Colonize it and the Sector remembers what Sol used to be, and comes to take it off you.
+No radiation mechanic. Nothing here is a survey-and-forget rock.
+
+
+
+The code is fully open source. You don't have to credit me. Claude Code built this anyway.
+[color=red]Requires [b]LunaLib[/b] and [b]LazyLib[/b].[/color]
+[/b][/center]
+[spoiler=Screenshots]
+[center][img]https://github.com/andrzejsokolowski/starsector-sol-renewed/blob/main/sol-renewed-planets.png?raw=true[/img][/center]
+[center][img]https://github.com/andrzejsokolowski/starsector-sol-renewed/blob/main/sol-renewed-system.png?raw=true[/img][/center]
+[/spoiler]
+[center]
+[table]
+[tr]
+[td][hr][center][size=12pt][b]The Quest: "Transferring Sol"[/b][/size][/center][hr]
+[list]
+[li]From [b]level 10[/b], once your fleet can transverse jump, a researcher in any bar has a lead for you.[/li]
+[li]It points at [b]Glasya-Labolas[/b], a rogue Tri-Tachyon AI on Eochu Bres. It has been listening to something transmitting from a pocket of abyssal hyperspace far too dense to jump into, and it is fairly sure the ancient encryption on the signal is Sol.[/li]
+[li]It wants something off [b]the Shroud[/b] first. If you have already killed a shrouded ship, it already has what it needs. If not, go into the Abyss and kill one.[/li]
+[li]You get a [b]Macro-scale Translocator[/b] and a set of coordinates well past the northern edge of every chart you own. Sit on top of them, switch it on, and Sol arrives in the Sector.[/li]
+[li]Not in the mood? Glasya-Labolas will just place Sol for you, and LunaSettings can spawn it with the sector at game start like any other system.[/li]
+[/list]
+[hr][center][size=12pt][b]The Colony Crisis: "Discovering the Past"[/b][/size][/center][hr]
+[list]
+[li]Every colony you found in Sol, every size it grows, every industry you build fills a meter in the intel screen. Bigger populations and higher-tech industry count for much more. Nothing lowers it.[/li]
+[li]Pirates and the Luddic Path set up bases nearby and start raiding. Then one of pirates, Pathers or Remnants hits you in force, then two at once, then all three.[/li]
+[li]Survive that and the meter drops back, but every wave after it is bigger. The Remnants come out of the nests in Sol itself.[/li]
+[li]On, off, meter speed and wave strength are all in LunaSettings.[/li]
+[/list]
+[hr][center][size=12pt][b]What Is In The System[/b][/size][/center][hr]
+[list]
+[li]A hypershunt around the Sun, a gate, a Domain-era mothership, a cryosleeper past Pluto.[/li]
+[li][b]Gungnir Dockyard[/b], an abandoned station over Mars with its storage still stocked.[/li]
+[li][b]The Inexorable Stasis[/b], a cryo-detention platform holding eight prisoners. Wake one and it flies for you.[/li]
+[li]Remnants in four settings: none, light (outer system only, the default), heavy, overrun. Light leaves the inner planets clear to colonize from day one.[/li]
+[li][b]Alpha Centauri[/b] (three stars, Proxima b, a guarded nest with three Radiant wrecks) and Beta Centauri a few light-years out.[/li]
+[/list]
+[hr][center][size=12pt][b]Where This Comes From[/b][/size][/center][hr]
+[list]
+[li][b]Sol Solar System[/b] by [b]Bugatti Echelon[/b]: the planet textures, star art, the planet descriptions, the cryo-prison and the Centauri constellation all come from there.[/li]
+[li][b]Solsector[/b] by [b]Ugly American[/b]: the Remnant nest approach.[/li]
+[li]Music: [b]"Breath of SOL" by Taiwendo[/b], from Bugatti Echelon's mod. It plays the whole time you are in Sol or Alpha Centauri.[/li]
+[/list]
+[/td][/tr][/table][/center]
+[spoiler=FAQ]
+[b]Where is Sol? I can't find it.[/b]
+That is the point. Do the quest, or set "When Sol appears" to "At game start" in LunaSettings.
+[b]Can I add this to an existing save?[/b]
+Yes. The quest hooks itself up on load and the system is generated when you finish it.
+[b]Do I need Ashes of the Domain, Random Assortment of Things or Industrial Evolution?[/b]
+No. Nothing is required except LunaLib and LazyLib. If you do have them, Sol picks up the Nidavellir ring on Mars, the Pluto Mining Station, relic conditions, ruins you can restore and seasonal meteor showers. Unknown Skies and Dreams of the Past are supported the same way. Without them you just get fewer conditions.
+[b]Is there radiation?[/b]
+No.
+[b]The Remnants are too much / not enough.[/b]
+Four levels in LunaSettings, from none to overrun.
+[/spoiler]
+[spoiler=Version log]
+0.3.3 — the crisis panel shows a legend of everything that raises the meter instead of repeating the stage descriptions.
+0.3.2 — the translocator can no longer be sold.
+0.3.1 — fixed the missing "Continue" when Glasya-Labolas hands over the translocator.
+0.3.0 — the "Transferring Sol" quest. Sol is no longer on the map at game start.
+0.2.1 — crisis points now follow population and build cost. Resized Mercury, Venus, Jupiter and Saturn.
+0.2.0 — the "Discovering the Past" colony crisis. Wider orbits.
+0.1.1 — first public build: the system, the cryo-prison, Gungnir Dockyard, configurable Remnants, Alpha and Beta Centauri.
+[/spoiler]
