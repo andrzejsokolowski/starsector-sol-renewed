@@ -57,6 +57,22 @@ Licensing: skipped for now; the mod will be shown to the Bugatti and Solsector a
   whole systems mid-campaign (abyssal "Deep Space" encounters), and our generator is self-contained, so the quest's
   last step can call SolSystem.generate + Centauri.generate. Not started.
 
+## Round 4: the quest (user, 2026-09-05, v0.3.0)
+- "Transferring Sol", the user's script step by step: bar event (level 10+, Transverse Jump known, shows in every bar
+  until accepted) -> Glasya-Labolas (AI, user's own portrait) in the Eochu Bres comm directory -> the conversation as
+  written, with "Yes" / "W-What?" (no quest yet) / "No, I don't care" (ends it; talking again offers a restart) /
+  "Skip the quest" (confirmation, then Sol spawns) -> Shroud check = any $defeatedDweller_* key or shrouded substrate
+  in player memory; if none, stage SHROUD until a kill -> Macro-scale Translocator (price 0, no_sell, restored to the
+  hold if it goes missing) -> signal beacon in hyperspace 4000 units north of the map edge above Hybrasil (the game's
+  abyss is the lower-left corner plus everything outside the map; north inside the map is not abyssal) -> dialog opens
+  on arrival -> Sol + Centauri generated mid-game, quest done.
+- Default spawn mode is Quest; LunaSettings "When Sol appears" can restore "At game start". Saves that already have
+  Sol are untouched. Everything Sol needs at runtime is installed by SolRenewedModPlugin.installSolRuntime after a
+  mid-game spawn.
+- Code: solrenewed.quest (SolQuest state machine + helpers, SolQuestIntel, SolQuestBarEvent, SrQuestCMD rule command,
+  SignalDialog, SolQuestWatcher, TranslocatorItemPlugin); data/campaign/rules.csv and special_items.csv;
+  settings.json registers the rule command package and the portrait.
+
 ## Implementation notes (v0.1.0)
 - Kotlin + gradle, same setup as Intel Renewed. `./gradlew jar` then `python package.py`.
 - Sol id: system named "Sol" with memory flag `$sr_sol`; `SolSystem.find()` locates it.
@@ -72,6 +88,11 @@ Licensing: skipped for now; the mod will be shown to the Bugatti and Solsector a
   4. Remnant nests at Neptune + Kuiper on Light; beacon at the jump point.
   5. Alpha Centauri: three stars, Proxima b, nest with three Radiant wrecks. Beta Centauri blue giant.
   6. Music plays in Sol. Descriptions show without nicknames.
-  7. Crisis: colonize Mars -> "Discovering the Past" appears in intel with +10. Build Mining (+10) or Heavy
+  7. Quest (default mode): new game -> no Sol on the map. Level 10 + Transverse Jump -> researcher in every bar.
+     Accept -> intel "Transferring Sol" points at Eochu Bres. Talk to Glasya-Labolas (comm directory) -> full
+     conversation; without a Shroud kill the intel says to go kill one; with one, the translocator appears in cargo
+     and a purple beacon sits above the map edge north of Hybrasil. Fly onto it -> dialog -> Sol appears, intel
+     points at it. Also try "Skip the quest" and "No, I don't care" then talking again. Console: no need.
+  8. Crisis: colonize Mars -> "Discovering the Past" appears in intel with +10. Build Mining (+10) or Heavy
      Industry (+50), grow to size 4 (+5). At 200: pirate + Pather base intel appear near Sol, small pirate raid arrives. At 450
      a real wave. Check the reset to 450 after a Reckoning. LunaSettings knobs: pace 4.0 makes testing quick.

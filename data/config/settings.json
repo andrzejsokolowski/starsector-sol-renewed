@@ -1,4 +1,7 @@
 {
+	# Rule commands (data/campaign/rules.csv) are looked up in these packages.
+	"ruleCommandPackages": ["solrenewed.quest"],
+
 	"graphics": {
 		"stars": {
 			"sr_sol": "graphics/planets/sol.jpg"
@@ -44,6 +47,9 @@
 		},
 		"warroom": {
 			"sr_icon_sol": "graphics/warroom/icon_sol.png",
+		},
+		"characters": {
+			"sr_glasya_labolas": "graphics/portraits/sr_glasya_labolas.png",
 		},
 		"illustrations": {
 			"sr_luna_bootprint": "graphics/illustrations/luna_bootPrint.jpg",

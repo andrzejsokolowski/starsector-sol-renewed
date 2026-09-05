@@ -25,4 +25,25 @@
 		"tags": ["has_interaction_dialog", "neutrino", "sr_cryo_prison"],
 		"layers": [STATIONS],
 	},
+
+	# The pulsing marker in the Abyss where the translocator has to be activated. Looks and pings like a warning beacon.
+	"sr_translocator_signal": {
+		"defaultName": "Anomalous Signal",
+		"defaultRadius": 40,
+		"detectionRange": 8000,
+		"discoverable": false,
+		"icon": "graphics/icons/warning_beacon.png",
+		"iconColor": [220, 70, 255, 255],
+		"iconWidth": 24,
+		"iconHeight": 24,
+		"spriteWidth": 64,
+		"spriteHeight": 64,
+		"showInCampaign": true,
+		"showIconOnMap": true,
+		"scaleIconWithZoom": true,
+		"customDescriptionId": "sr_translocator_signal",
+		"tags": ["neutrino_high", "sr_translocator_signal"],
+		"layers": [STATIONS],
+		"pluginClass": "com.fs.starfarer.api.impl.campaign.WarningBeaconEntityPlugin",
+	},
 }

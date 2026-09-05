@@ -8,6 +8,17 @@ Built on the shoulders of two other Sol mods: **Sol Solar System** by Bugatti Ec
 star art, descriptions, the cryo-prison, the Centauri constellation, music "Breath of SOL" by
 Taiwendo) and **Solsector** by Ugly American (the Remnant nest approach). No radiation mechanic.
 
+## Getting there: the "Transferring Sol" quest
+
+By default Sol does not exist until you bring it here. From level 10, once your fleet can transverse
+jump, a concerned researcher waits in every bar until you accept: a rogue Tri-Tachyon AI on Eochu Bres
+(Hybrasil), Glasya-Labolas, has picked up Sol transmitting from a region of the Abyss too dense to jump
+into. If you have already destroyed a shrouded ship it hands you the Macro-scale Translocator at once;
+otherwise go into the Abyss, kill one, and come back. Fly the device to the signal far beyond the
+northern edge of the map, activate it on top of the signal, and Sol arrives in the Persean Sector.
+Glasya-Labolas also has a "skip the quest" option that places Sol immediately, and LunaSettings can
+switch the mod back to generating Sol with the sector at game start.
+
 ## What is in the system
 
 - A hypershunt orbiting Sol, one gate with a Domain-era mothership nearby, two jump points, a

@@ -14,6 +14,8 @@ object SrSettings {
     private val log = Global.getLogger(SrSettings::class.java)
 
     var spawnSol = true; private set
+    /** False (the default) means Sol only appears at the end of the "Transferring Sol" quest. */
+    var spawnAtStart = false; private set
     var posX = -10700f; private set
     var posY = -28704f; private set
     var spawnCentauri = true; private set
@@ -40,6 +42,7 @@ object SrSettings {
         }
         try {
             spawnSol = bool("sr_spawn_sol", spawnSol)
+            spawnAtStart = LunaSettings.getString(MOD_ID, "sr_spawn_mode")?.trim()?.lowercase()?.startsWith("at game") ?: spawnAtStart
             posX = LunaSettings.getDouble(MOD_ID, "sr_pos_x")?.toFloat() ?: posX
             posY = LunaSettings.getDouble(MOD_ID, "sr_pos_y")?.toFloat() ?: posY
             spawnCentauri = bool("sr_spawn_centauri", spawnCentauri)
