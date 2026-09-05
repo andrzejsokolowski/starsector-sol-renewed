@@ -10,13 +10,13 @@ Taiwendo) and **Solsector** by Ugly American (the Remnant nest approach). No rad
 
 ## What is in the system
 
-- A hypershunt orbiting Sol, one gate with a Domain-era mothership and gate hauler nearby, two
-  jump points, a comm relay, sensor array and nav buoy, two stable points on Earth's orbit.
+- A hypershunt orbiting Sol, one gate with a Domain-era mothership nearby, two jump points, a
+  comm relay, sensor array and nav buoy, two stable points on Earth's orbit.
 - Ashes of the Domain: the Nidavellir shipyard ring on Mars and the Pluto Mining Station at Pluto
   (both still spawn elsewhere in the sector too). Pre-collapse facilities on Venus and Callisto.
 - Planet conditions from Unknown Skies, Random Assortment of Things and Industrial Evolution
   when those mods are on (IndEvo ruins with fixed industries on Earth, Mars and Charon; an artillery
-  station over Jupiter; a minefield over Venus).
+  station over Jupiter).
 - A Domain cryosleeper past Pluto and, with Dreams of the Past, a Domain-era Ark near Neptune.
 - Gungnir Dockyard, an abandoned station over Mars with its storage still stocked.
 - "The Inexorable Stasis", a cryo-detention platform: wake one of eight prisoner officers.
@@ -25,6 +25,17 @@ Taiwendo) and **Solsector** by Ugly American (the Remnant nest approach). No rad
 - Alpha Centauri (three stars, Proxima b, a guarded Remnant nest with three Radiant wrecks) and
   Beta Centauri about 4 light-years away.
 - Seasonal Industrial Evolution meteor showers while you are in or near Sol.
+
+## The colony crisis: "Discovering the Past"
+
+Colonize Sol and the Sector starts to remember it. Every colony you found there, every size a
+colony grows, every industry you finish and switching on the hypershunt fill a meter in the intel
+screen; nothing lowers it. At 200 a pirate base and a Luddic Path base set up shop within a dozen
+light-years and the pirates send a first raiding party. At 450 one of pirates, Pathers or Remnants
+attacks in force (pirates raid, the other two try to saturation-bombard a colony), at 700 two of
+them come at once, and at 1000 all three. Survive that and the meter drops back to 450, but every
+wave after it is bigger. Remnant attacks come from the nests in Sol itself, so clearing them helps.
+LunaSettings has an on/off switch, a meter-speed knob and a wave-strength knob.
 
 ## Building
 

@@ -4,12 +4,13 @@ import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import org.apache.log4j.Logger;
+import solrenewed.crisis.CrisisWatcher;
 
 /**
  * Entry point. Sol and the Centaurus constellation are generated once, when a new game is created
  * (after the sector's own procgen so we can find a free spot on the map). Everything that must
- * survive a save/load (the cryo-prison dialog hook, the meteor-shower listener) is re-registered on
- * every game load instead of being written into the save.
+ * survive a save/load (the cryo-prison dialog hook, the meteor-shower listener, the colony-crisis
+ * watcher) is re-registered on every game load instead of being written into the save.
  */
 public class SolRenewedModPlugin extends BaseModPlugin {
 
@@ -48,5 +49,6 @@ public class SolRenewedModPlugin extends BaseModPlugin {
         if (ModCheck.INSTANCE.getHasIndEvo() && SrSettings.INSTANCE.getMeteors()) {
             MeteorShowers.INSTANCE.install(sol);
         }
+        Global.getSector().addTransientScript(new CrisisWatcher());
     }
 }

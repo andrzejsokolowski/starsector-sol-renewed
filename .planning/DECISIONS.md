@@ -43,6 +43,13 @@ Licensing: skipped for now; the mod will be shown to the Bugatti and Solsector a
 - RAT rolls its own relic conditions on first load (that is how Earth got Engineered Utopia). `Relics` snapshots the
   RAT conditions we placed and strips every other one from Sol / Alpha Centauri planets one frame into the first load.
 
+## Round 3 (user, 2026-09-05)
+- Author string is just "Oddisz". Bump at least the patch version with every change.
+- Orbits spread out to match the bigger planets: Mercury 1800 ... Pluto 15300, Kuiper 16500. The Jupiter-Saturn
+  gap is 3000 so Callisto (1360 from Jupiter) and Titan (1400 from Saturn) never cross; everything that sat between
+  planets (gate, relay, sensor array, nav buoy, jump points, cryo prison, cryosleeper, Kuiper nest) moved with them.
+- Colony crisis "Discovering the Past" built (v0.2.0). Design and numbers in CRISIS.md.
+
 ## Implementation notes (v0.1.0)
 - Kotlin + gradle, same setup as Intel Renewed. `./gradlew jar` then `python package.py`.
 - Sol id: system named "Sol" with memory flag `$sr_sol`; `SolSystem.find()` locates it.
@@ -52,9 +59,12 @@ Licensing: skipped for now; the mod will be shown to the Bugatti and Solsector a
 - Remnant nests: `Remnants.nest()` = vanilla battlestation recipe + `RemnantStationFleetManager`; points x8 = FP.
 - Cryo prison dialog hook and meteor listener are transient, re-registered in `onGameLoad`.
 - Untested in-game as of 2026-09-05. First test checklist:
-  1. New game, find Sol at about (-54000,-36000). Check planet count (16 bodies + star), sizes, click-ability.
+  1. New game, find Sol at about (-10700,-28704). Check planet count (16 bodies + star), sizes, click-ability.
   2. Mars: Nidavellir ring visible; Pluto: mining station orbiting. Hypershunt near the Sun with Tesseract guards.
   3. Gate + mothership/hauler. Gungnir Dockyard storage. Cryo prison dialog (wake one officer, station fades).
   4. Remnant nests at Neptune + Kuiper on Light; beacon at the jump point.
   5. Alpha Centauri: three stars, Proxima b, nest with three Radiant wrecks. Beta Centauri blue giant.
   6. Music plays in Sol. Descriptions show without nicknames.
+  7. Crisis: colonize Mars -> "Discovering the Past" appears in intel with +60. Build an industry (+40), grow a
+     size (+40 at size 4). At 200: pirate + Pather base intel appear near Sol, small pirate raid arrives. At 450
+     a real wave. Check the reset to 450 after a Reckoning. LunaSettings knobs: pace 4.0 makes testing quick.

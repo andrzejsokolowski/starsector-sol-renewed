@@ -18,4 +18,4 @@ and more brutal the attacks on the player become.
   - Does the crisis end permanently once the top stage is beaten, like vanilla?
   - Should it also fire for NPC-faction colonies in Sol, or only player ones?
 
-Status: parked. Do NOT build until the base system mod is playable.
+Status: BUILT 2026-09-05 as v0.2.0, see CRISIS.md for the design that was actually implemented.

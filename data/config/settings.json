@@ -39,6 +39,9 @@
 		"misc": {
 			"sr_saturn_belt": "graphics/planets/saturn_belt.png",
 		},
+		"events": {
+			"sr_crisis": "graphics/icons/crisis_sol.png"
+		},
 		"warroom": {
 			"sr_icon_sol": "graphics/warroom/icon_sol.png",
 		},

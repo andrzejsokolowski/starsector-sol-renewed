@@ -5,7 +5,7 @@ import lunalib.lunaSettings.LunaSettings
 
 /**
  * Values from the mod's LunaSettings page (`data/config/LunaSettings.csv`). The layout settings are
- * read when a new game is generated; the meteor toggle is re-read on every game load. Every read
+ * read when a new game is generated; the meteor and crisis settings are re-read on every game load. Every read
  * falls back to the built-in default so a missing LunaLib or a broken CSV never stops generation.
  */
 object SrSettings {
@@ -26,6 +26,11 @@ object SrSettings {
     var plutoStation = true; private set
     var cryoPrison = true; private set
     var meteors = true; private set
+
+    /** The "Discovering the Past" colony crisis: on/off, how fast the meter fills, how big the waves are. */
+    var crisis = true; private set
+    var crisisPace = 1f; private set
+    var crisisStrength = 1f; private set
 
     @JvmStatic
     fun reload() {
@@ -50,6 +55,9 @@ object SrSettings {
             plutoStation = bool("sr_pluto_station", plutoStation)
             cryoPrison = bool("sr_cryo_prison", cryoPrison)
             meteors = bool("sr_meteors", meteors)
+            crisis = bool("sr_crisis", crisis)
+            crisisPace = LunaSettings.getDouble(MOD_ID, "sr_crisis_pace")?.toFloat() ?: crisisPace
+            crisisStrength = LunaSettings.getDouble(MOD_ID, "sr_crisis_strength")?.toFloat() ?: crisisStrength
         } catch (t: Throwable) {
             log.warn("[SolRenewed] Could not read LunaSettings; using defaults.", t)
         }
