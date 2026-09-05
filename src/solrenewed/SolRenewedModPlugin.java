@@ -44,6 +44,7 @@ public class SolRenewedModPlugin extends BaseModPlugin {
         if (sol == null) return;
         SrSettings.reload();
         CryoPrison.INSTANCE.registerDialogHook();
+        Relics.INSTANCE.schedule();
         if (ModCheck.INSTANCE.getHasIndEvo() && SrSettings.INSTANCE.getMeteors()) {
             MeteorShowers.INSTANCE.install(sol);
         }

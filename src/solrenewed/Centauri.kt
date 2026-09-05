@@ -64,6 +64,7 @@ object Centauri {
             Remnants.guardedNest(sys, proxima, 180f, 1900f, 120f, "Proxima Watch")
         }
 
+        Relics.snapshot(sys)
         Uni.jumpPoint(sys, center, "sr_cen_jump", "Nadir Point", 180f, 11000f, 2000f)
         Uni.finishJumpPoints(sys)
         nebula(sys, 0f, 0f)

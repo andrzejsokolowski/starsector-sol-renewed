@@ -40,6 +40,8 @@ Licensing: skipped for now; the mod will be shown to the Bugatti and Solsector a
 - No stellar mirrors/shades and no solar_array condition on Venus/Mars: the player builds them with TASC.
 - No Venus minefield (IndEvo).
 - No caches at the gate (the large cache would be empty outside the sector's own generation).
+- RAT rolls its own relic conditions on first load (that is how Earth got Engineered Utopia). `Relics` snapshots the
+  RAT conditions we placed and strips every other one from Sol / Alpha Centauri planets one frame into the first load.
 
 ## Implementation notes (v0.1.0)
 - Kotlin + gradle, same setup as Intel Renewed. `./gradlew jar` then `python package.py`.

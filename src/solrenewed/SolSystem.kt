@@ -76,6 +76,7 @@ object SolSystem {
         Derelicts.decorateGate(sys, gate)
         if (SrSettings.cryoPrison) CryoPrison.spawn(sys, star, 12200f, 270f)
         Remnants.populateSol(sys, star, p, SrSettings.remnantLevel)
+        Relics.snapshot(sys)
         Uni.hyperSweep(sys)
     }
 
