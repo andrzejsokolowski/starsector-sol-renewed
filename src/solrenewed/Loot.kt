@@ -11,7 +11,7 @@ import java.util.Random
 
 /**
  * What the abandoned Gungnir Dockyard has in storage. A trimmed version of Bugatti's loot tables:
- * vanilla items, plus Ashes of the Domain extras when that mod is on. Nothing from Superweapons.
+ * vanilla items, plus Ashes of the Domain materials when that mod is on. No superweapons of any kind.
  */
 object Loot {
 
@@ -27,7 +27,6 @@ object Loot {
         Entry("lightmg", 100f, 1, 3), Entry("heavymg", 100f, 1, 3), Entry("lightac", 20f, 1, 3), Entry("lightmortar", 20f, 1, 3),
         Entry("heavyac", 20f, 1, 3), Entry("heavymortar", 20f, 1, 3), Entry("mininglaser", 100f, 1, 3), Entry("miningblaster", 50f, 1, 3),
         Entry("railgun", 30f, 1, 2), Entry("heavymauler", 20f, 1, 2), Entry("hveldriver", 20f, 1, 2), Entry("gauss", 5f, 1, 1),
-        Entry("gungnir_railgun", 20f, 1, 2, "aotd_vok"), Entry("aotd_shadowlance", 10f, 1, 1, "aotd_vok"), Entry("aotd_shroud_railgun", 10f, 1, 1, "aotd_vok"),
     )
     private val COMMODITIES = listOf(
         Entry("food", 100f, 20, 100), Entry("organics", 100f, 10, 100), Entry("metals", 100f, 20, 100), Entry("ore", 100f, 20, 100),
@@ -67,7 +66,6 @@ object Loot {
         cargo.addFuel(scale(100, 300, 1.2f).toFloat())
         cargo.addSupplies(scale(50, 150, 1.2f).toFloat())
         cargo.addMarines(scale(30, 60, 1.2f))
-        if (ModCheck.hasVoK) safe("gungnir_railgun") { cargo.addWeapons("gungnir_railgun", 2) }
         roll(WEAPONS, scale(4, 7, 1f)) { e -> cargo.addWeapons(e.id, e.qty()) }
         roll(COMMODITIES, scale(3, 6, 1f)) { e -> cargo.addCommodity(e.id, e.qty().toFloat()) }
         roll(SPECIALS, 1) { e -> cargo.addSpecial(SpecialItemData(e.id, null), 1f) }

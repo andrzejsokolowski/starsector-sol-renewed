@@ -2,8 +2,8 @@ fieldID,fieldName,fieldType,defaultValue,secondaryValue,fieldDescription,minValu
 sr_header_sol,Sol Header,Header,Sol,,,,,Sol
 sr_note_newgame,New game note,Text,"The layout settings on this page are read once, when a new game is created; changing them later does not touch an existing save. The meteor shower toggle works at any time.",,,,,Sol
 sr_spawn_sol,Generate Sol,Boolean,true,,"Adds the Sol system to a new sector.",,,Sol
-sr_pos_x,Sol map position (horizontal),Double,-54000,,"Where Sol sits on the sector map. If the spot is taken, Sol is nudged to the nearest free space. Default -54000.",-90000,90000,Sol
-sr_pos_y,Sol map position (vertical),Double,-36000,,"Default -36000.",-60000,60000,Sol
+sr_pos_x,Sol map position (horizontal),Double,-10700,,"Where Sol sits on the sector map. If the spot is taken, Sol is nudged to the nearest free space. Default -10700.",-90000,90000,Sol
+sr_pos_y,Sol map position (vertical),Double,-28704,,"Default -28704.",-60000,60000,Sol
 sr_spawn_centauri,Generate Alpha and Beta Centauri,Boolean,true,,"Adds the Centaurus constellation about 4 light-years from Sol: Alpha Centauri (three stars, Proxima b) and Beta Centauri (a lonely blue giant).",,,Sol
 ,,,,,,,,
 sr_header_remnants,Remnants Header,Header,Remnant presence in Sol,,,,,Sol

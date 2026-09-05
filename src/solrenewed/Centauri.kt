@@ -57,7 +57,7 @@ object Centauri {
 
         val proximaB = Uni.planet(sys, proxima, "sr_cen_proxima_b", "Proxima b", "terran-eccentric", 45f, 120f, 1100f, 90f)
         val pm = Uni.market(proximaB, "neutral", "habitable", "very_hot", "dense_atmosphere", "extreme_weather", "irradiated",
-            "ore_ultrarich", "rare_ore_ultrarich", "ruins_scattered")
+            "ore_ultrarich", "rare_ore_ultrarich")
         ModCheck.cond(pm, "IndEvo", "IndEvo_ArtilleryStationCondition")
 
         if (SrSettings.remnantLevel > 0) {

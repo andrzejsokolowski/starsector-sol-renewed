@@ -73,7 +73,7 @@ object Remnants {
         if (level >= 3) {
             sys.addTag(Tags.THEME_REMNANT_MAIN)
             for (a in listOf(45f, 135f, 225f, 315f)) {
-                nest(sys, star, STANDARD, a, 1250f, 60f, maxFleets = 5, minPts = 20, maxPts = 40)
+                nest(sys, star, STANDARD, a, 1400f, 65f, maxFleets = 5, minPts = 20, maxPts = 40)
             }
             nest(sys, mercury, STANDARD, 60f, mercury.radius + 220f, 20f, maxFleets = 5, minPts = 30, maxPts = 50)
             nest(sys, mercury, DAMAGED, 300f, mercury.radius + 220f, 20f, maxFleets = 5, minPts = 5, maxPts = 35, core = Commodities.BETA_CORE)

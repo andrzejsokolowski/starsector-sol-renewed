@@ -27,6 +27,20 @@ AOTD: the second (random) Pluto station / Nidavellir elsewhere in the sector sta
 
 Licensing: skipped for now; the mod will be shown to the Bugatti and Solsector authors as a shared effort.
 
+## Round 2 tweaks (user, 2026-09-05, after first look)
+- Default Sol position (-10700, -28704); LunaSettings override stays.
+- No AOTD superweapons in the Gungnir Dockyard (Gungnir railgun, shadowlance, shroud railgun all gone).
+- Planets +40 radius each (Mercury 110 ... Jupiter 440, Pluto 95); moons unchanged; star 700 -> 840.
+  Jupiter moons/rings, Uranus/Neptune rings, Charon and the hypershunt nudged outward to fit.
+- No random derelict ships anywhere (wreck ring + the six at the gate). The three Radiants at Proxima stay.
+- Earth loses lobster pens and Ancient Megacities (Engineered Utopia was never on it).
+- Every ruins condition one level down except Earth's vast: Luna/Mars/Jupiter/Saturn extensive, Ganymede/Callisto
+  widespread, Europa scattered, Neptune/Charon/Proxima b none.
+- No gate hauler (vanilla has exactly one).
+- No stellar mirrors/shades and no solar_array condition on Venus/Mars: the player builds them with TASC.
+- No Venus minefield (IndEvo).
+- No caches at the gate (the large cache would be empty outside the sector's own generation).
+
 ## Implementation notes (v0.1.0)
 - Kotlin + gradle, same setup as Intel Renewed. `./gradlew jar` then `python package.py`.
 - Sol id: system named "Sol" with memory flag `$sr_sol`; `SolSystem.find()` locates it.

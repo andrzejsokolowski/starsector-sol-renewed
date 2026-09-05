@@ -14,8 +14,8 @@ object SrSettings {
     private val log = Global.getLogger(SrSettings::class.java)
 
     var spawnSol = true; private set
-    var posX = -54000f; private set
-    var posY = -36000f; private set
+    var posX = -10700f; private set
+    var posY = -28704f; private set
     var spawnCentauri = true; private set
 
     /** 0 = none, 1 = light, 2 = heavy, 3 = overrun. */
