@@ -73,6 +73,14 @@ Licensing: skipped for now; the mod will be shown to the Bugatti and Solsector a
   SignalDialog, SolQuestWatcher, TranslocatorItemPlugin); data/campaign/rules.csv and special_items.csv;
   settings.json registers the rule command package and the portrait.
 
+## Round 5: first playtest fixes (user, 2026-09-05, v0.3.1)
+- The "Continue" that hands over the translocator never appeared on the RETURN greeting. Cause: FireBest applies a rule's
+  own options first, then runs its script, and `FireAll PopulateOptions` clears the option panel before adding the
+  PopulateOptions results. Rule of thumb for this mod: a rule whose script fires PopulateOptions must not carry options
+  itself; put them in a PopulateOptions rule instead (srGL_optTake).
+- Translocator uses the vanilla Janus Device icon (graphics/icons/cargo/janus_device.png) until the user draws one.
+- Another installed mod injects a "Meet $himOrHer in person" option into every person conversation; not ours, harmless.
+
 ## Implementation notes (v0.1.0)
 - Kotlin + gradle, same setup as Intel Renewed. `./gradlew jar` then `python package.py`.
 - Sol id: system named "Sol" with memory flag `$sr_sol`; `SolSystem.find()` locates it.

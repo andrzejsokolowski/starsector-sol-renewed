@@ -18,7 +18,7 @@ SrQuestCMD stage SHROUD","ShowPersonVisual
 FireAll PopulateOptions","""Back already? My instruments say the Abyss has not given you what we need yet. Find one of the shrouded things out there and put it down. The sniffer will do the rest.""",,
 srGL_greetReturn,PickGreeting,"$sr_glasya_labolas score:1000
 SrQuestCMD stage RETURN","ShowPersonVisual
-FireAll PopulateOptions","""There you are. The sniffer we installed on your ships lit up like a nova the moment you engaged it. With the data obtained through quantum entanglement communication directly during the encounter, we've been able to create this.""",srGL_take:Continue,
+FireAll PopulateOptions","""There you are. The sniffer we installed on your ships lit up like a nova the moment you engaged it. With the data obtained through quantum entanglement communication directly during the encounter, we've been able to create this.""",,
 srGL_greetTravel,PickGreeting,"$sr_glasya_labolas score:1000
 SrQuestCMD stage TRAVEL","ShowPersonVisual
 FireAll PopulateOptions","""You still have the translocator, $playerName. The coordinates are in your logs. Be directly on top of them when you activate it, or don't come back to tell me what happened.""",,
@@ -32,6 +32,8 @@ srGL_optWhat,PopulateOptions,"$sr_glasya_labolas score:1000
 SrQuestCMD stage NONE",,,"0:srGL_what:""W-What?""",
 srGL_optRestart,PopulateOptions,"$sr_glasya_labolas score:1000
 SrQuestCMD stage DECLINED",,,"0:srGL_restart:""Actually, about that technology...""",
+srGL_optTake,PopulateOptions,"$sr_glasya_labolas score:1000
+SrQuestCMD stage RETURN",,,0:srGL_take:Continue,
 srGL_optNo,PopulateOptions,"$sr_glasya_labolas score:1000
 SrQuestCMD offering",,,"1:srGL_no:""No. I don't really care.""",
 srGL_optSkip,PopulateOptions,"$sr_glasya_labolas score:1000
