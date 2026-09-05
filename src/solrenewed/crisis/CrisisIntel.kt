@@ -9,6 +9,7 @@ import com.fs.starfarer.api.impl.campaign.intel.events.BaseEventIntel.EventStage
 import com.fs.starfarer.api.impl.campaign.intel.events.BaseEventIntel.StageIconSize
 import com.fs.starfarer.api.impl.campaign.intel.events.BaseFactorTooltip
 import com.fs.starfarer.api.impl.campaign.intel.group.FleetGroupIntel
+import com.fs.starfarer.api.ui.Alignment
 import com.fs.starfarer.api.ui.SectorMapAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI.TooltipCreator
@@ -281,8 +282,62 @@ class CrisisIntel : BaseEventIntel() {
 
     private fun escalationPercent(): Int = ((min(ESCALATION_MAX, 1f + ESCALATION_STEP * cycles) - 1f) * 100f).roundToInt()
 
+    /**
+     * Only the opening blurb gets a row of its own; every stage past it is explained by the tooltip on
+     * its marker above the bar, so repeating all of them down the panel is just noise. A stage whose
+     * text adds nothing has its whole row skipped by the game.
+     */
     override fun addStageDescriptionText(info: TooltipMakerAPI, width: Float, stageId: Any) {
+        if (stageId !== Stage.START) return
         addStageDesc(info, stageId, 0f)
+    }
+
+    /** Scaled the same way [add] scales real points, so the legend matches what the meter will actually do. */
+    private fun scaled(points: Int): Int = (points * SrSettings.crisisPace).roundToInt()
+
+    private fun industryExample(id: String): Pair<String, Int>? = try {
+        val spec = Global.getSettings().getIndustrySpec(id)
+        if (spec == null) null else spec.name to scaled(industryPoints(spec.cost))
+    } catch (t: Throwable) {
+        null
+    }
+
+    /** The legend: everything that moves the meter, with the numbers this game is actually using. */
+    override fun afterStageDescriptions(main: TooltipMakerAPI) {
+        val opad = 10f
+        val faction = factionForUIColors
+        val width = (barWidth - opad) / 2f
+        val ptsW = 46f
+        val text = Misc.getTextColor()
+        val h = Misc.getHighlightColor()
+
+        val sub = main.beginSubTooltip(width)
+        sub.addSectionHeading("What raises attention", faction.baseUIColor, faction.darkUIColor, Alignment.MID, opad)
+            .position.setXAlignOffset(0f)
+        sub.beginTable2(faction, 20f, false, false, "In Sol", width - ptsW - 3f, "Points", ptsW)
+        sub.addRow(Alignment.LMID, text, "Colony founded", Alignment.RMID, h, "+${scaled(POINTS_COLONY)}")
+        for (size in 4..9) {
+            sub.addRow(Alignment.LMID, text, "Colony grows to size $size", Alignment.RMID, h, "+${scaled(growthPoints(size))}")
+        }
+        // Expressed as credits-per-point rather than points-per-10k so the pace setting never rounds this to zero.
+        val perPoint = CREDITS_PER_POINT / maxOf(0.01f, SrSettings.crisisPace)
+        sub.addRow(Alignment.LMID, text, "Industry, per ${Misc.getDGSCredits(perPoint)} to build", Alignment.RMID, h, "+1")
+        sub.addTable("", -1, opad)
+        sub.prev.position.setXAlignOffset(-5f)
+        main.endSubTooltip()
+        main.addCustom(sub, opad)
+
+        val examples = listOfNotNull(
+            industryExample("farming"), industryExample("orbitalworks"), industryExample("heavyindustry")
+        )
+        if (examples.isNotEmpty()) {
+            val label = main.addPara(
+                "For example: " + examples.joinToString(", ") { "${it.first} +${it.second}" } + ".", opad
+            )
+            label.setHighlight(*examples.map { "+${it.second}" }.toTypedArray())
+            label.setHighlightColors(*examples.map { h }.toTypedArray())
+        }
+        main.addPara("Nothing else raises it. Hover a marker above the bar to see what that stage brings.", opad)
     }
 
     private fun addStageDesc(info: TooltipMakerAPI, stageId: Any, initPad: Float) {

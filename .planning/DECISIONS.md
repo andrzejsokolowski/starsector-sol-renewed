@@ -88,6 +88,13 @@ Licensing: skipped for now; the mod will be shown to the Bugatti and Solsector a
   Planetkiller and Wormhole Scanner. Added it; the cargo tooltip now reads "Can not remove item" by itself.
 - Crisis still untested. User suspects the 12 ly base-spawn radius is too wide but asked for NO change until they test.
 
+## Round 7: crisis panel legend (user, 2026-09-05, v0.3.3)
+- The four stage description rows in the middle of the crisis panel duplicated the marker tooltips; removed by having
+  addStageDescriptionText write nothing except for START (the game skips a row whose text has zero height).
+- afterStageDescriptions now draws a "What raises attention" table: colony founded, each size step, and industry
+  expressed as credits-per-point, all scaled by the LunaSettings pace knob, plus live examples read from the industry
+  specs so they stay right with other mods installed.
+
 ## Implementation notes (v0.1.0)
 - Kotlin + gradle, same setup as Intel Renewed. `./gradlew jar` then `python package.py`.
 - Sol id: system named "Sol" with memory flag `$sr_sol`; `SolSystem.find()` locates it.
