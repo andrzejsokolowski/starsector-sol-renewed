@@ -1,0 +1,49 @@
+{
+	"graphics": {
+		"stars": {
+			"sr_sol": "graphics/planets/sol.jpg"
+		},
+		"planets": {
+			"sr_mercury": "graphics/planets/mercury.jpg",
+			"sr_venus": "graphics/planets/venus.jpg",
+			"sr_earth": "graphics/planets/earth.jpg",
+			"sr_mars": "graphics/planets/mars.jpg",
+			"sr_jupiter": "graphics/planets/jupiter.jpg",
+			"sr_saturn": "graphics/planets/saturn.jpg",
+			"sr_uranus": "graphics/planets/uranus.jpg",
+			"sr_neptune": "graphics/planets/neptune.jpg",
+			"sr_pluto": "graphics/planets/pluto.jpg",
+			"sr_luna": "graphics/planets/luna.jpg",
+			"sr_io": "graphics/planets/io.jpg",
+			"sr_europa": "graphics/planets/europa.jpg",
+			"sr_ganymede": "graphics/planets/ganymede.jpg",
+			"sr_callisto": "graphics/planets/callisto.jpg",
+			"sr_titan": "graphics/planets/titan.png",
+			"sr_charon": "graphics/planets/charon.jpg",
+		},
+		"clouds": {
+			"sr_clouds_earth": "graphics/planets/clouds_Earth.png",
+			"sr_clouds_mars": "graphics/planets/clouds_Mars.png",
+			"sr_clouds_titan": "graphics/planets/clouds_Titan.png",
+			"sr_clouds_giant": "graphics/planets/clouds_Giant.png",
+			"sr_clouds_heavy": "graphics/planets/clouds_Heavy.png",
+			"sr_clouds_swept": "graphics/planets/clouds_Swept.png",
+			"sr_clouds_star": "graphics/planets/clouds_StarWhite.png",
+		},
+		"backgrounds": {
+			"sr_galaxy": "graphics/backgrounds/galaxy0.jpg",
+		},
+		"coronas": {
+			"sr_sol_halo": "graphics/fx/sol_halo.png",
+		},
+		"misc": {
+			"sr_saturn_belt": "graphics/planets/saturn_belt.png",
+		},
+		"warroom": {
+			"sr_icon_sol": "graphics/warroom/icon_sol.png",
+		},
+		"illustrations": {
+			"sr_luna_bootprint": "graphics/illustrations/luna_bootPrint.jpg",
+		},
+	},
+}

@@ -1,0 +1,19 @@
+fieldID,fieldName,fieldType,defaultValue,secondaryValue,fieldDescription,minValue,maxValue,tab
+sr_header_sol,Sol Header,Header,Sol,,,,,Sol
+sr_note_newgame,New game note,Text,"The layout settings on this page are read once, when a new game is created; changing them later does not touch an existing save. The meteor shower toggle works at any time.",,,,,Sol
+sr_spawn_sol,Generate Sol,Boolean,true,,"Adds the Sol system to a new sector.",,,Sol
+sr_pos_x,Sol map position (horizontal),Double,-54000,,"Where Sol sits on the sector map. If the spot is taken, Sol is nudged to the nearest free space. Default -54000.",-90000,90000,Sol
+sr_pos_y,Sol map position (vertical),Double,-36000,,"Default -36000.",-60000,60000,Sol
+sr_spawn_centauri,Generate Alpha and Beta Centauri,Boolean,true,,"Adds the Centaurus constellation about 4 light-years from Sol: Alpha Centauri (three stars, Proxima b) and Beta Centauri (a lonely blue giant).",,,Sol
+,,,,,,,,
+sr_header_remnants,Remnants Header,Header,Remnant presence in Sol,,,,,Sol
+sr_remnant_level,How many Remnants live in Sol,Radio,Light,"None, Light, Heavy, Overrun","None: no Remnants at all. Light: a couple of nests in the outer system, the inner planets are free to colonize. Heavy: nests at Jupiter, Saturn and Mercury plus a patrol, the inner system is contested. Overrun: nests around the Sun and at most planets with big patrol fleets, Sol is a Remnant fortress.",,,Sol
+,,,,,,,,
+sr_header_megas,Megastructures Header,Header,Megastructures,,,,,Sol
+sr_hypershunt,Hypershunt around the Sun,Boolean,true,,"Adds a Domain-era coronal hypershunt orbiting Sol, with its usual guardians.",,,Sol
+sr_nidavellir,Nidavellir shipyard on Mars,Boolean,true,,"Needs Ashes of the Domain: Vaults of Knowledge. Mars becomes the shipyard world. AOTD still places its own Nidavellir somewhere else too.",,,Sol
+sr_pluto_station,Mining station at Pluto,Boolean,true,,"Needs Ashes of the Domain: Vaults of Knowledge. Adds the Pluto Mining Station. AOTD still places its own somewhere else too.",,,Sol
+,,,,,,,,
+sr_header_extras,Extras Header,Header,Extras,,,,,Sol
+sr_cryo_prison,Cryo-detention platform,Boolean,true,,"A Domain-era prison station in the outer system. Break in and wake one of eight prisoner officers.",,,Sol
+sr_meteors,Seasonal meteor showers,Boolean,true,,"Needs Industrial Evolution. Meteor showers hit Sol on a seasonal schedule while you are in or near the system.",,,Sol

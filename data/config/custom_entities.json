@@ -1,0 +1,28 @@
+{
+	# Domain-era cryogenic detention platform. One-shot interaction: wake exactly one prisoner officer.
+	"sr_cryo_prison": {
+		"defaultName": "Unit 7: Cryo-Detention",
+		"defaultRadius": 60,
+		"customDescriptionId": "sr_cryo_prison",
+		"nameInText": "cryo-detention platform",
+		"shortName": "Unit 7",
+		"aOrAn": "a",
+		"isOrAre": "is",
+		"interactionImage": "graphics/illustrations/cryosleeper_interior.jpg",
+		"icon": "graphics/icons/intel/log_cryosleeper.png",
+		"iconWidth": 40,
+		"iconHeight": 40,
+		"sprite": "graphics/stations/cryosleeper.png",
+		"spriteWidth": 108,
+		"spriteHeight": 108,
+		"renderShadow": true,
+		"useLightColor": true,
+		"showInCampaign": true,
+		"showIconOnMap": true,
+		"showNameOnMap": true,
+		"scaleNameWithZoom": false,
+		"scaleIconWithZoom": true,
+		"tags": ["has_interaction_dialog", "neutrino", "sr_cryo_prison"],
+		"layers": [STATIONS],
+	},
+}

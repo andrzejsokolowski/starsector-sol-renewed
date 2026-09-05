@@ -1,0 +1,8 @@
+{
+	"music": {
+		# Played while inside Sol (and Alpha Centauri). "Breath of SOL" by Taiwendo.
+		"sr_music_sol": [
+			{"file": "Breath of SOL.ogg", "source": "sounds/system", "volume": 0.5, "randomStart": true}
+		],
+	},
+}

@@ -1,0 +1,23 @@
+# Gradle
+.gradle/
+build/
+.kotlin/
+
+# Claude / planning scratch. reference/ holds decompiled third-party code: private study only, never published.
+.claude/
+.planning/reference/
+
+# Compiled output
+out/
+bin/
+
+# IntelliJ
+.idea/
+*.iml
+
+# Built jar is committed on release tags only.
+jars/
+
+# Packaged release archive (regenerated on each version cut)
+*.zip
+/SolRenewed/
