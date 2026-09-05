@@ -28,14 +28,13 @@ Taiwendo) and **Solsector** by Ugly American (the Remnant nest approach). No rad
 
 ## The colony crisis: "Discovering the Past"
 
-Colonize Sol and the Sector starts to remember it. Every colony you found there, every size a
-colony grows, every industry you finish and switching on the hypershunt fill a meter in the intel
-screen; nothing lowers it. At 200 a pirate base and a Luddic Path base set up shop within a dozen
-light-years and the pirates send a first raiding party. At 450 one of pirates, Pathers or Remnants
-attacks in force (pirates raid, the other two try to saturation-bombard a colony), at 700 two of
-them come at once, and at 1000 all three. Survive that and the meter drops back to 450, but every
-wave after it is bigger. Remnant attacks come from the nests in Sol itself, so clearing them helps.
-LunaSettings has an on/off switch, a meter-speed knob and a wave-strength knob.
+Colonize Sol and the Sector starts to remember it. New colonies, population growth and industries
+in Sol fill a meter in the intel screen (people and build cost decide how much: a farm barely
+registers, a size-8 world or a skunkworks is a lot); nothing lowers it. At 200 a pirate base and a
+Luddic Path base move in nearby and a first pirate raid comes. At 450 one of pirates, Pathers or
+Remnants attacks in force, at 700 two of them, at 1000 all three. After that the meter drops to 450
+and every later wave is bigger. Remnants come from the nests in Sol itself. LunaSettings: on/off,
+meter speed, wave strength.
 
 ## Building
 

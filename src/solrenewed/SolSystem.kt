@@ -18,23 +18,23 @@ import java.awt.Color
 import java.util.Random
 
 /**
- * Builds the Sol system. Distances and sizes are gamified: moons are radius 50-75, planets 95-440,
- * Pluto at 15300 units, so the whole system is about the size of a large vanilla one.
+ * Builds the Sol system. Distances and sizes are gamified: moons are radius 50-75, planets 73-540,
+ * Pluto at 15400 units, so the whole system is about the size of a large vanilla one.
  *
  * Layout (radius / orbit / days):
  * ```
  * Sol       840         hypershunt at 1150
- * Mercury   110  1800   90
- * Venus     170  2750  150
+ * Mercury    73  1800   90
+ * Venus     113  2750  150
  * Earth     200  3800  230    Luna 55 @ 400 / 30, Lagrange points on the same orbit
  * Mars      140  4900  320    Nidavellir (AOTD), Gungnir Dockyard
  * belt          6200
- * Jupiter   440  7500  500    Io 55 @ 700, Europa 55 @ 880, Ganymede 75 @ 1100, Callisto 65 @ 1360
- * Saturn    380 10500  720    Titan 70 @ 1400 (the Jupiter-Saturn gap is sized so Callisto and Titan never cross)
- * Uranus    290 12400  950
- * Neptune   280 13900 1150
- * Pluto      95 15300 1450    Charon 50 @ 260, Pluto Mining Station (AOTD)
- * Kuiper        16500
+ * Jupiter   540  7500  500    rings 590/660, Io 55 @ 780, Europa 55 @ 950, Ganymede 75 @ 1150, Callisto 65 @ 1380
+ * Saturn    480 10600  730    rings 640-1240, Titan 70 @ 1450 (gap to Jupiter sized so Callisto and Titan never cross)
+ * Uranus    290 12700  980
+ * Neptune   280 14000 1160
+ * Pluto      95 15400 1460    Charon 50 @ 260, Pluto Mining Station (AOTD)
+ * Kuiper        16600
  * ```
  */
 object SolSystem {
@@ -74,7 +74,7 @@ object SolSystem {
         val gate = gate(sys, star)
         jumpPoints(sys, star)
         Derelicts.decorateGate(sys, gate)
-        if (SrSettings.cryoPrison) CryoPrison.spawn(sys, star, 14750f, 270f)
+        if (SrSettings.cryoPrison) CryoPrison.spawn(sys, star, 14950f, 270f)
         Remnants.populateSol(sys, star, p, SrSettings.remnantLevel)
         Relics.snapshot(sys)
         Uni.hyperSweep(sys)
@@ -124,7 +124,7 @@ object SolSystem {
     // ------------------------------------------------------------------ planets
 
     private fun mercury(sys: StarSystemAPI, star: PlanetAPI): PlanetAPI {
-        val m = Uni.planet(sys, star, "sr_mercury", "Mercury", "barren-bombarded", 270f, 110f, 1800f, 90f)
+        val m = Uni.planet(sys, star, "sr_mercury", "Mercury", "barren-bombarded", 270f, 73f, 1800f, 90f)
         m.customDescriptionId = "sr_mercury"
         m.spec.setTexture(sprite("planets", "sr_mercury"))
         m.spec.setTilt(-0.03f)
@@ -136,7 +136,7 @@ object SolSystem {
     }
 
     private fun venus(sys: StarSystemAPI, star: PlanetAPI): PlanetAPI {
-        val v = Uni.planet(sys, star, "sr_venus", "Venus", "toxic", 180f, 170f, 2750f, 150f)
+        val v = Uni.planet(sys, star, "sr_venus", "Venus", "toxic", 180f, 113f, 2750f, 150f)
         v.customDescriptionId = "sr_venus"
         v.spec.setTexture(sprite("planets", "sr_venus"))
         v.spec.setCloudTexture(sprite("clouds", "sr_clouds_heavy"))
@@ -217,7 +217,7 @@ object SolSystem {
 
     private fun jupiter(sys: StarSystemAPI, star: PlanetAPI, p: MutableMap<String, PlanetAPI>): PlanetAPI {
         val type = if (ModCheck.hasUS) "US_gas_giant" else "gas_giant"
-        val j = Uni.planet(sys, star, "sr_jupiter", "Jupiter", type, 150f, 440f, 7500f, 500f)
+        val j = Uni.planet(sys, star, "sr_jupiter", "Jupiter", type, 150f, 540f, 7500f, 500f)
         j.customDescriptionId = "sr_jupiter"
         j.spec.setTexture(sprite("planets", "sr_jupiter"))
         j.spec.setCloudTexture(sprite("clouds", "sr_clouds_giant"))
@@ -234,11 +234,11 @@ object SolSystem {
         ModCheck.cond(jm, "assortment_of_things", "rat_ancient_fuel_hub")
         ModCheck.tag(j, "assortment_of_things", "rat_relic_condition", "rat_ancient_fuel_hub")
         ModCheck.cond(jm, "IndEvo", "IndEvo_ArtilleryStationCondition")
-        sys.addRingBand(j, "misc", "rings_ice0", 128f, 1, Color(190, 150, 50, 255), 128f, 510f, -60f, "ring", "Amalthea Ring")
-        sys.addRingBand(j, "misc", "rings_dust0", 128f, 0, Color(190, 120, 20, 255), 128f, 580f, -75f, "ring", "Thebe Ring")
-        Uni.magneticField(sys, j, 490f, 1050f)
+        sys.addRingBand(j, "misc", "rings_ice0", 128f, 1, Color(190, 150, 50, 255), 128f, 590f, -60f, "ring", "Amalthea Ring")
+        sys.addRingBand(j, "misc", "rings_dust0", 128f, 0, Color(190, 120, 20, 255), 128f, 660f, -75f, "ring", "Thebe Ring")
+        Uni.magneticField(sys, j, 590f, 1150f)
 
-        val io = Uni.planet(sys, j, "sr_io", "Io", "lava", 120f, 55f, 700f, 6f)
+        val io = Uni.planet(sys, j, "sr_io", "Io", "lava", 120f, 55f, 780f, 7f)
         io.customDescriptionId = "sr_io"
         io.spec.setTexture(sprite("planets", "sr_io"))
         io.spec.setTilt(-1.0f)
@@ -252,7 +252,7 @@ object SolSystem {
             "ore_abundant", "rare_ore_abundant")
         p["io"] = io
 
-        val europa = Uni.planet(sys, j, "sr_europa", "Europa", "rocky_ice", 0f, 55f, 880f, 9f)
+        val europa = Uni.planet(sys, j, "sr_europa", "Europa", "rocky_ice", 0f, 55f, 950f, 10f)
         europa.customDescriptionId = "sr_europa"
         europa.spec.setTexture(sprite("planets", "sr_europa"))
         europa.spec.setTilt(1.8f)
@@ -264,7 +264,7 @@ object SolSystem {
         ModCheck.cond(eum, "assortment_of_things", "rat_bionic_plantlife")
         p["europa"] = europa
 
-        val ganymede = Uni.planet(sys, j, "sr_ganymede", "Ganymede", "rocky_ice", 240f, 75f, 1100f, 14f)
+        val ganymede = Uni.planet(sys, j, "sr_ganymede", "Ganymede", "rocky_ice", 240f, 75f, 1150f, 15f)
         ganymede.customDescriptionId = "sr_ganymede"
         ganymede.spec.setTexture(sprite("planets", "sr_ganymede"))
         ganymede.spec.setTilt(-23.5f)
@@ -277,7 +277,7 @@ object SolSystem {
         ModCheck.cond(gm, "US", "US_bedrock")
         p["ganymede"] = ganymede
 
-        val callisto = Uni.planet(sys, j, "sr_callisto", "Callisto", "rocky_ice", 160f, 65f, 1360f, 22f)
+        val callisto = Uni.planet(sys, j, "sr_callisto", "Callisto", "rocky_ice", 160f, 65f, 1380f, 23f)
         callisto.customDescriptionId = "sr_callisto"
         callisto.spec.setTexture(sprite("planets", "sr_callisto"))
         callisto.spec.setTilt(-23.5f)
@@ -294,7 +294,7 @@ object SolSystem {
 
     private fun saturn(sys: StarSystemAPI, star: PlanetAPI, p: MutableMap<String, PlanetAPI>): PlanetAPI {
         val type = if (ModCheck.hasUS) "US_gas_giantB" else "gas_giant"
-        val s = Uni.planet(sys, star, "sr_saturn", "Saturn", type, 300f, 380f, 10500f, 720f)
+        val s = Uni.planet(sys, star, "sr_saturn", "Saturn", type, 300f, 480f, 10600f, 730f)
         s.customDescriptionId = "sr_saturn"
         s.spec.setTexture(sprite("planets", "sr_saturn"))
         s.spec.setCloudTexture(sprite("clouds", "sr_clouds_giant"))
@@ -311,12 +311,12 @@ object SolSystem {
         ModCheck.cond(sm, "assortment_of_things", "rat_ancient_fuel_hub")
         ModCheck.tag(s, "assortment_of_things", "rat_relic_condition", "rat_ancient_fuel_hub")
         val belt = "sr_saturn_belt"
-        sys.addRingBand(s, "misc", belt, 256f, 0, Color(200, 180, 150, 150), 200f, 540f, -80f, "ring", "C Ring")
-        sys.addRingBand(s, "misc", belt, 256f, 1, Color(220, 200, 170, 150), 200f, 740f, -95f, "ring", "B Ring")
-        sys.addRingBand(s, "misc", belt, 256f, 2, Color(210, 190, 160, 150), 200f, 940f, -110f, "ring", "A Ring")
-        sys.addRingBand(s, "misc", belt, 256f, 3, Color(180, 160, 140, 150), 200f, 1140f, -125f, "ring", "Cassini Division")
+        sys.addRingBand(s, "misc", belt, 256f, 0, Color(200, 180, 150, 150), 200f, 640f, -80f, "ring", "C Ring")
+        sys.addRingBand(s, "misc", belt, 256f, 1, Color(220, 200, 170, 150), 200f, 840f, -95f, "ring", "B Ring")
+        sys.addRingBand(s, "misc", belt, 256f, 2, Color(210, 190, 160, 150), 200f, 1040f, -110f, "ring", "A Ring")
+        sys.addRingBand(s, "misc", belt, 256f, 3, Color(180, 160, 140, 150), 200f, 1240f, -125f, "ring", "Cassini Division")
 
-        val titan = Uni.planet(sys, s, "sr_titan", "Titan", "toxic_cold", 0f, 70f, 1400f, 25f)
+        val titan = Uni.planet(sys, s, "sr_titan", "Titan", "toxic_cold", 0f, 70f, 1450f, 27f)
         titan.customDescriptionId = "sr_titan"
         titan.spec.setTexture(sprite("planets", "sr_titan"))
         titan.spec.setCloudTexture(sprite("clouds", "sr_clouds_titan"))
@@ -336,7 +336,7 @@ object SolSystem {
 
     private fun uranus(sys: StarSystemAPI, star: PlanetAPI): PlanetAPI {
         val type = if (ModCheck.hasUS) "US_iceA" else "gas_giant"
-        val u = Uni.planet(sys, star, "sr_uranus", "Uranus", type, 0f, 290f, 12400f, 950f)
+        val u = Uni.planet(sys, star, "sr_uranus", "Uranus", type, 0f, 290f, 12700f, 980f)
         u.customDescriptionId = "sr_uranus"
         u.spec.setTexture(sprite("planets", "sr_uranus"))
         u.spec.setCloudTexture(sprite("clouds", "sr_clouds_swept"))
@@ -359,7 +359,7 @@ object SolSystem {
 
     private fun neptune(sys: StarSystemAPI, star: PlanetAPI): PlanetAPI {
         val type = if (ModCheck.hasUS) "US_iceB" else "gas_giant"
-        val n = Uni.planet(sys, star, "sr_neptune", "Neptune", type, 60f, 280f, 13900f, 1150f)
+        val n = Uni.planet(sys, star, "sr_neptune", "Neptune", type, 60f, 280f, 14000f, 1160f)
         n.customDescriptionId = "sr_neptune"
         n.spec.setTexture(sprite("planets", "sr_neptune"))
         n.spec.setCloudTexture(sprite("clouds", "sr_clouds_swept"))
@@ -381,7 +381,7 @@ object SolSystem {
     }
 
     private fun pluto(sys: StarSystemAPI, star: PlanetAPI, p: MutableMap<String, PlanetAPI>): PlanetAPI {
-        val pl = Uni.planet(sys, star, "sr_pluto", "Pluto", "frozen", 240f, 95f, 15300f, 1450f)
+        val pl = Uni.planet(sys, star, "sr_pluto", "Pluto", "frozen", 240f, 95f, 15400f, 1460f)
         pl.customDescriptionId = "sr_pluto"
         pl.spec.setTexture(sprite("planets", "sr_pluto"))
         pl.spec.setTilt(-122.5f)
@@ -412,8 +412,8 @@ object SolSystem {
         sys.addAsteroidBelt(star, 400, 6200f, 500f, 290f, 460f, Terrain_ASTEROID_BELT, "Main Belt")
         sys.addRingBand(star, "misc", "rings_dust0", 256f, 3, Color(175, 140, 100, 40), 512f, 6200f, 400f)
         sys.addOrbitalJunk(star, "orbital_junk", 120, 16f, 32f, 6200f, 400f, 290f, 460f, 100f, 200f)
-        sys.addAsteroidBelt(star, 250, 16500f, 600f, 1050f, 1650f, Terrain_ASTEROID_BELT, "Kuiper Belt")
-        sys.addRingBand(star, "misc", "rings_ice0", 256f, 2, Color(175, 100, 75, 25), 1024f, 16500f, 1400f)
+        sys.addAsteroidBelt(star, 250, 16600f, 600f, 1060f, 1660f, Terrain_ASTEROID_BELT, "Kuiper Belt")
+        sys.addRingBand(star, "misc", "rings_ice0", 256f, 2, Color(175, 100, 75, 25), 1024f, 16600f, 1410f)
     }
 
     private const val Terrain_ASTEROID_BELT = "asteroid_belt"
@@ -425,9 +425,9 @@ object SolSystem {
         Uni.entity(sys, star, "sr_stable2", "Trailing Point", "stable_location", null, earth.circularOrbitAngle - 60f, 3800f, 230f)
         val relay = Uni.entity(sys, star, "sr_dsn", "Deep Space Network", "comm_relay", "neutral", 305f, 5800f, 380f)
         relay.customDescriptionId = "sr_dsn"
-        val sensor = Uni.entity(sys, star, "sr_ssn", "Space Surveillance Network", "sensor_array", "neutral", 180f, 9000f, 620f)
+        val sensor = Uni.entity(sys, star, "sr_ssn", "Space Surveillance Network", "sensor_array", "neutral", 180f, 9010f, 630f)
         sensor.customDescriptionId = "sr_ssn"
-        Uni.entity(sys, star, "sr_hubble", "Hubble Buoy", "nav_buoy", "neutral", 90f, 13100f, 1050f)
+        Uni.entity(sys, star, "sr_hubble", "Hubble Buoy", "nav_buoy", "neutral", 90f, 13270f, 1070f)
 
         // Gungnir Dockyard: an abandoned station over Mars with the storage still full.
         val mars = p.getValue("mars")
@@ -438,7 +438,7 @@ object SolSystem {
 
         // Two sleepers: a Domain cryosleeper past Pluto, and the Prometheus ark near Neptune.
         val random = Random(sys.name.hashCode().toLong())
-        val foundation = Uni.entity(sys, star, "sr_foundation", null, "derelict_cryosleeper", "derelict", 210f, 15900f, 1750f, random)
+        val foundation = Uni.entity(sys, star, "sr_foundation", null, "derelict_cryosleeper", "derelict", 210f, 16000f, 1760f, random)
         foundation.name = foundation.name + " \"Foundation\""
         sys.addTag(Tags.THEME_DERELICT_CRYOSLEEPER)
         val neptune = p.getValue("neptune")
@@ -468,7 +468,7 @@ object SolSystem {
 
     private fun jumpPoints(sys: StarSystemAPI, star: PlanetAPI) {
         val inner = Uni.jumpPoint(sys, star, "sr_jump_inner", "Inner System Jump-point", 45f, 3250f, 180f)
-        val fringe = Uni.jumpPoint(sys, star, "sr_jump_fringe", "Fringe Jump-point", 30f, 14350f, 1300f)
+        val fringe = Uni.jumpPoint(sys, star, "sr_jump_fringe", "Fringe Jump-point", 30f, 14700f, 1320f)
         Uni.finishJumpPoints(sys)
         Uni.asteroidField(sys, inner, 45f, 180f, 60f, 6, "Newtonian Debris")
         Uni.asteroidField(sys, inner, 225f, 180f, 60f, 6, "Newtonian Debris")

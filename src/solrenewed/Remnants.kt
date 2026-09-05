@@ -58,7 +58,7 @@ object Remnants {
 
         // Light: the outer system only. Inner planets stay free to settle.
         nest(sys, neptune, DAMAGED, 200f, neptune.radius + 450f, 90f, maxFleets = 2, minPts = 4, maxPts = 10, core = Commodities.BETA_CORE)
-        nest(sys, star, STANDARD, 120f, 16500f, 1650f, maxFleets = 3, minPts = 6, maxPts = 14)
+        nest(sys, star, STANDARD, 120f, 16600f, 1660f, maxFleets = 3, minPts = 6, maxPts = 14)
 
         if (level >= 2) {
             sys.addTag(Tags.THEME_REMNANT_RESURGENT)

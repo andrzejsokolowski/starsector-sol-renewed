@@ -5,6 +5,7 @@ import com.fs.starfarer.api.impl.campaign.intel.events.BaseFactorTooltip
 import com.fs.starfarer.api.impl.campaign.intel.events.BaseOneTimeFactor
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI.TooltipCreator
+import com.fs.starfarer.api.util.Misc
 
 /**
  * One line in the crisis' "recent one-time factors" list: something the player did in Sol and the
@@ -16,11 +17,17 @@ class CrisisFactor(private val desc: String, points: Int) : BaseOneTimeFactor(po
 
     override fun getMainRowTooltip(intel: BaseEventIntel): TooltipCreator = object : BaseFactorTooltip() {
         override fun createTooltip(tooltip: TooltipMakerAPI, expanded: Boolean, tooltipParam: Any?) {
+            val h = Misc.getHighlightColor()
+            tooltip.addPara("A new colony in Sol is worth %s.", 0f, h, "+${CrisisIntel.POINTS_COLONY}")
             tooltip.addPara(
-                "Every colony founded in Sol, every size a colony grows, every industry that comes online " +
-                    "and the hypershunt being switched on all draw more of the Sector's attention to the system. " +
-                    "Nothing lowers the meter; it only stops climbing when Sol stops growing.", 0f
+                "Growing a size counts people, not steps: size 4 is %s, size 6 %s, size 8 %s.", 10f, h,
+                "+${CrisisIntel.growthPoints(4)}", "+${CrisisIntel.growthPoints(6)}", "+${CrisisIntel.growthPoints(8)}"
             )
+            tooltip.addPara(
+                "An industry counts its build cost, %s per point: farms barely register, heavy industry and " +
+                    "anything beyond it does.", 10f, h, Misc.getDGSCredits(CrisisIntel.CREDITS_PER_POINT)
+            )
+            tooltip.addPara("Nothing lowers the meter.", 10f)
         }
     }
 }

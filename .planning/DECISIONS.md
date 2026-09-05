@@ -49,6 +49,13 @@ Licensing: skipped for now; the mod will be shown to the Bugatti and Solsector a
   gap is 3000 so Callisto (1360 from Jupiter) and Titan (1400 from Saturn) never cross; everything that sat between
   planets (gate, relay, sensor array, nav buoy, jump points, cryo prison, cryosleeper, Kuiper nest) moved with them.
 - Colony crisis "Discovering the Past" built (v0.2.0). Design and numbers in CRISIS.md.
+- v0.2.1: crisis points reworked (colony +10, growth by head count 5/15/40/100/250/600, industry = build cost / 10k,
+  no hypershunt points), in-game text cut to one or two lines per stage. Mercury 73 / Venus 113 (a third smaller),
+  Jupiter 540 / Saturn 480 (+100); Jupiter's rings and moons and Saturn's rings and Titan pushed out to fit, the
+  outer planets shifted again so nothing crosses: Saturn 10600, Uranus 12700, Neptune 14000, Pluto 15400, Kuiper 16600.
+- Parked idea: a small "find Sol" quest, with Sol only generated when it completes. Feasible: the game itself creates
+  whole systems mid-campaign (abyssal "Deep Space" encounters), and our generator is self-contained, so the quest's
+  last step can call SolSystem.generate + Centauri.generate. Not started.
 
 ## Implementation notes (v0.1.0)
 - Kotlin + gradle, same setup as Intel Renewed. `./gradlew jar` then `python package.py`.
@@ -65,6 +72,6 @@ Licensing: skipped for now; the mod will be shown to the Bugatti and Solsector a
   4. Remnant nests at Neptune + Kuiper on Light; beacon at the jump point.
   5. Alpha Centauri: three stars, Proxima b, nest with three Radiant wrecks. Beta Centauri blue giant.
   6. Music plays in Sol. Descriptions show without nicknames.
-  7. Crisis: colonize Mars -> "Discovering the Past" appears in intel with +60. Build an industry (+40), grow a
-     size (+40 at size 4). At 200: pirate + Pather base intel appear near Sol, small pirate raid arrives. At 450
+  7. Crisis: colonize Mars -> "Discovering the Past" appears in intel with +10. Build Mining (+10) or Heavy
+     Industry (+50), grow to size 4 (+5). At 200: pirate + Pather base intel appear near Sol, small pirate raid arrives. At 450
      a real wave. Check the reset to 450 after a Reckoning. LunaSettings knobs: pace 4.0 makes testing quick.

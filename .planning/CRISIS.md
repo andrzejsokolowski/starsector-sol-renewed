@@ -5,15 +5,15 @@ game's Hostile Activity / Hyperspace Topography events. The meter only moves whe
 Sol; nothing ticks by itself.
 
 ## What fills the meter (flat, one-time)
-| what                                   | points                              |
-|----------------------------------------|-------------------------------------|
-| colony founded in Sol                  | +60                                 |
-| colony grows a size                    | +10 x new size (4 -> +40, 6 -> +60) |
-| industry finished (not a structure)    | +40 (upgrades count as new)         |
-| hypershunt in Sol switched on          | +100                                |
-All multiplied by the LunaSettings "pace" knob. Only player-owned colonies count.
+| what                                   | points                                                   |
+|----------------------------------------|----------------------------------------------------------|
+| colony founded in Sol                  | +10                                                      |
+| colony grows a size                    | by head count, not steps: to 4 +5, 5 +15, 6 +40, 7 +100, 8 +250, 9 +600, then x2.5 per size |
+| industry finished (not a structure)    | build cost / 10,000: Farming 8, Mining 10, Refining 23, Heavy Industry 50, Orbital Works 30, AOTD Monoculture Plots 2, Orbital Skunkworks 100, Mining Megaplex 100; upgrades count their own cost |
+All multiplied by the LunaSettings "pace" knob. Only player-owned colonies count. (Round 2: the hypershunt no longer
+counts, and the numbers were reworked from the flat 60/10xsize/40 of v0.2.0 at the user's request.)
 Checked every few days by comparing against a snapshot kept in the event; a save that already has
-developed Sol colonies when the mod is added only gets +60 per existing colony.
+developed Sol colonies when the mod is added only gets +10 per existing colony.
 
 ## Stages (meter 0-1000)
 | meter | stage      | what happens                                                                |

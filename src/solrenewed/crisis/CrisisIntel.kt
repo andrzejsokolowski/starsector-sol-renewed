@@ -22,9 +22,10 @@ import kotlin.math.roundToInt
 
 /**
  * "Discovering the Past": the Sol colony crisis. A meter that only ever climbs when the player
- * develops Sol (colonies, colony sizes, industries, the hypershunt) and that brings pirate and
- * Luddic Path bases to the neighbourhood, then raids, bombardment attempts and Remnant attacks as
- * it crosses its stages. Built on the game's own event framework, so it lives in the intel screen
+ * develops Sol (colonies, population growth, industries) and that brings pirate and Luddic Path
+ * bases to the neighbourhood, then raids, bombardment attempts and Remnant attacks as it crosses
+ * its stages. Points scale with what was built: population growth counts people, not size steps,
+ * and an industry counts its build cost, so a farm barely registers and a skunkworks does not. Built on the game's own event framework, so it lives in the intel screen
  * next to Hostile Activity with the same progress bar, stage markers and factor lists.
  *
  * Created by [CrisisWatcher] when the first player colony appears in Sol; ends if none is left.
@@ -45,10 +46,24 @@ class CrisisIntel : BaseEventIntel() {
         const val P_RECKONING = 1000
         const val RESET_AFTER_RECKONING = 450
 
-        const val POINTS_COLONY = 60
-        const val POINTS_PER_SIZE = 10
-        const val POINTS_INDUSTRY = 40
-        const val POINTS_HYPERSHUNT = 100
+        const val POINTS_COLONY = 10
+        /** Credits of build cost per point: Farming (75k) is 8, Heavy Industry (500k) is 50, a 1M skunkworks 100. */
+        const val CREDITS_PER_POINT = 10000f
+        /** Growing to size 4, 5, 6, 7, 8, 9; beyond that each size is 2.5x the last. Roughly follows the head count. */
+        @JvmField val GROWTH_POINTS = intArrayOf(5, 15, 40, 100, 250, 600)
+
+        @JvmStatic
+        fun growthPoints(newSize: Int): Int {
+            val i = newSize - 4
+            if (i < 0) return 0
+            if (i < GROWTH_POINTS.size) return GROWTH_POINTS[i]
+            var p = GROWTH_POINTS.last().toFloat()
+            repeat(i - GROWTH_POINTS.size + 1) { p *= 2.5f }
+            return p.roundToInt()
+        }
+
+        @JvmStatic
+        fun industryPoints(cost: Float): Int = maxOf(1, (cost / CREDITS_PER_POINT).roundToInt())
 
         const val ESCALATION_STEP = 0.25f
         const val ESCALATION_MAX = 2.5f
@@ -70,7 +85,6 @@ class CrisisIntel : BaseEventIntel() {
     }
 
     private var snapshots = HashMap<String, Snapshot>()
-    private var hypershuntCounted = false
     /** Reckonings survived; every one makes later waves bigger. */
     var cycles = 0; private set
     private var waves = ArrayList<FleetGroupIntel>()
@@ -142,27 +156,18 @@ class CrisisIntel : BaseEventIntel() {
             }
             if (m.size > snap.size) {
                 var pts = 0
-                for (s in snap.size + 1..m.size) pts += POINTS_PER_SIZE * s
+                for (s in snap.size + 1..m.size) pts += growthPoints(s)
                 add(pts, "${m.name} grew to size ${m.size}")
                 snap.size = m.size
             }
             for (id in industries) {
                 if (id in snap.industries) continue
-                val name = m.getIndustry(id)?.currentName ?: id
-                add(POINTS_INDUSTRY, "$name built on ${m.name}")
+                val ind = m.getIndustry(id) ?: continue
+                add(industryPoints(ind.buildCost), "${ind.currentName} on ${m.name}")
             }
             snap.industries = industries
         }
         snapshots.keys.retainAll(seen)
-        if (!hypershuntCounted) {
-            for (tap in sol.getEntitiesWithTag(Tags.CORONAL_TAP)) {
-                if (tap.memoryWithoutUpdate.getBoolean("\$usable")) {
-                    hypershuntCounted = true
-                    add(POINTS_HYPERSHUNT, "Hypershunt activated")
-                    break
-                }
-            }
-        }
     }
 
     private fun add(points: Int, desc: String) {
@@ -257,21 +262,20 @@ class CrisisIntel : BaseEventIntel() {
         val param = listInfoParam
         if (isUpdate && param is EventStageData) {
             when (param.id) {
-                Stage.FOOTHOLD -> info.addPara("Pirates and the Luddic Path are moving in on Sol", tc, initPad)
-                Stage.RAID -> info.addPara("An attack on your Sol colonies is being organized", tc, initPad)
-                Stage.ASSAULT -> info.addPara("A two-pronged assault on your Sol colonies is being organized", tc, initPad)
-                Stage.RECKONING -> info.addPara("Everyone who wants Sol is coming at once", tc, initPad)
+                Stage.FOOTHOLD -> info.addPara("Pirates and the Luddic Path move in near Sol", tc, initPad)
+                Stage.RAID -> info.addPara("An attack on Sol is coming", tc, initPad)
+                Stage.ASSAULT -> info.addPara("Two attacks on Sol are coming", tc, initPad)
+                Stage.RECKONING -> info.addPara("Everyone is coming for Sol", tc, initPad)
             }
             return
         }
         if (isUpdate && param === RESET_PARAM) {
-            info.addPara("The Sector's attention drifts; the meter drops to %s", initPad, tc, h, "$RESET_AFTER_RECKONING")
-            info.addPara("Future waves are %s bigger", 0f, tc, h, "+${escalationPercent()}%")
+            info.addPara("Meter drops to %s; later waves %s bigger", initPad, tc, h, "$RESET_AFTER_RECKONING", "+${escalationPercent()}%")
             return
         }
         if (!isUpdate) {
             info.addPara("Attention on Sol: %s of %s", initPad, tc, h, "${getProgress()}", "${getMaxProgress()}")
-            if (cycles > 0) info.addPara("Waves are %s bigger", 0f, tc, h, "+${escalationPercent()}%")
+            if (cycles > 0) info.addPara("Waves %s bigger", 0f, tc, h, "+${escalationPercent()}%")
         }
     }
 
@@ -289,42 +293,25 @@ class CrisisIntel : BaseEventIntel() {
         val pirates = Global.getSector().getFaction(Factions.PIRATES).baseUIColor
         val pathers = Global.getSector().getFaction(Factions.LUDDIC_PATH).baseUIColor
         val remnants = Global.getSector().getFaction(Factions.REMNANTS).baseUIColor
-        val reached = isStageActive(stageId)
         when (stage) {
             Stage.START -> {
                 info.addPara(
-                    "Sol is the cradle of humanity, and a Sector that had forgotten it is starting to remember. " +
-                        "Every colony founded here, every size a colony grows, every industry that comes online and " +
-                        "the hypershunt being switched on draw more attention: scavengers who want what the Domain left " +
-                        "behind, zealots who call the return to Old Earth a blasphemy, and the Remnant nests that stir " +
-                        "as traffic through the system grows.", initPad
+                    "Sol is the cradle of humanity, and the Sector is starting to remember. Colonies, people and " +
+                        "industry here draw attention.", initPad
                 )
-                info.addPara("The meter %s. It only stops climbing when Sol stops growing.", opad, bad, "never falls on its own")
+                info.addPara("The meter %s.", opad, bad, "never falls on its own")
             }
             Stage.FOOTHOLD -> {
-                if (!reached) {
-                    val label = info.addPara(
-                        "Pirates and the Luddic Path each set up a base within a dozen light-years of Sol, and the " +
-                            "pirates send a first raiding party to test your defences.", initPad
-                    )
-                    label.setHighlight("Pirates", "Luddic Path")
-                    label.setHighlightColors(pirates, pathers)
-                } else {
-                    val label = info.addPara(
-                        "Pirates and the Luddic Path have bases near Sol. Destroying a base sends its raiders home " +
-                            "until a new one is founded, but it does not lower the meter.", initPad
-                    )
-                    label.setHighlight("Pirates", "Luddic Path")
-                    label.setHighlightColors(pirates, pathers)
-                }
+                val label = info.addPara(
+                    "Pirates and the Luddic Path set up bases near Sol. A first pirate raid follows.", initPad
+                )
+                label.setHighlight("Pirates", "Luddic Path")
+                label.setHighlightColors(pirates, pathers)
             }
             Stage.RAID -> {
-                val label = info.addPara(
-                    "One of the three comes in force: pirates to seize the system's relays and plunder the colonies, " +
-                        "Pathers or Remnants to saturation-bombard one of them.", initPad
-                )
-                label.setHighlight("pirates", "Pathers", "Remnants", "saturation-bombard")
-                label.setHighlightColors(pirates, pathers, remnants, bad)
+                val label = info.addPara("One of pirates, Pathers or Remnants attacks in force.", initPad)
+                label.setHighlight("pirates", "Pathers", "Remnants")
+                label.setHighlightColors(pirates, pathers, remnants)
                 lastWaveLine(info, stage, opad)
             }
             Stage.ASSAULT -> {
@@ -332,16 +319,11 @@ class CrisisIntel : BaseEventIntel() {
                 lastWaveLine(info, stage, opad)
             }
             Stage.RECKONING -> {
-                val label = info.addPara(
-                    "Pirates, the Luddic Path and the Remnants all at once. Survive it and the Sector loses interest for " +
-                        "a while: the meter drops to %s and the bases return if you had cleared them, but every wave after " +
-                        "that is bigger.", initPad, h, "$RESET_AFTER_RECKONING"
+                info.addPara(
+                    "All three at once. Afterwards the meter drops to %s and every later wave is bigger.",
+                    initPad, h, "$RESET_AFTER_RECKONING"
                 )
-                label.setHighlight("Pirates", "Luddic Path", "Remnants", "$RESET_AFTER_RECKONING")
-                label.setHighlightColors(pirates, pathers, remnants, h)
-                if (cycles > 0) {
-                    info.addPara("Reckonings survived: %s. Waves are currently %s bigger.", opad, h, "$cycles", "+${escalationPercent()}%")
-                }
+                if (cycles > 0) info.addPara("Waves are now %s bigger.", opad, h, "+${escalationPercent()}%")
             }
         }
     }
