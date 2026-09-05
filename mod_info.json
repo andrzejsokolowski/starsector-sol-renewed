@@ -1,9 +1,9 @@
 {
   "id": "sol_renewed",
   "name": "Sol Renewed",
-  "author": "Oddisz (built on Sol Solar System by Bugatti Echelon and Solsector by Ugly American; music by Taiwendo)",
+  "author": "Oddisz",
   "utility": "true",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A gamified Sol system: the eight planets, Pluto, and the moons that matter, at distances you can actually fly. Ashes of the Domain megastructures on Mars and Pluto, a hypershunt around the Sun, a gate, cross-mod planet conditions, and a configurable Remnant presence. No radiation.",
   "gameVersion": "0.98a-RC8",
   "jars": ["jars/SolRenewed.jar"],
