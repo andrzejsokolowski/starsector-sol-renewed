@@ -1,5 +1,7 @@
 # Sol Renewed
 
+[Forum thread](https://fractalsoftworks.com/forum/index.php?topic=35983)
+
 A gamified Sol system for Starsector 0.98a. The eight planets, Pluto, and the moons that matter
 (Luna, Io, Europa, Ganymede, Callisto, Titan, Charon) at distances you can actually fly across,
 with nothing smaller than radius 50 so every body is easy to click.

@@ -1,0 +1,4 @@
+Sol Renewed 0.3.5
+
+Added the official forum link to the mod metadata, version checker, and README.
+https://fractalsoftworks.com/forum/index.php?topic=35983

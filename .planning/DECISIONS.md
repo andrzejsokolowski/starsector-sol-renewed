@@ -106,6 +106,11 @@ Licensing: skipped for now; the mod will be shown to the Bugatti and Solsector a
 - Validation: jar build and forbidden-API scan passed. The campaign API regression harness covers combat results,
   older-save evidence, restored memory, repeated installation, and stage guards. An in-game playtest is still needed.
 
+## Round 9: forum metadata (v0.3.5)
+- Official forum topic: https://fractalsoftworks.com/forum/index.php?topic=35983.
+- Added modThreadId to mod_info.json and sol_renewed.version using the Hullmods Renewed format.
+- Added the forum link to README.md. The version-checker registration remains sol_renewed.version.
+
 ## Implementation notes (v0.1.0)
 - Kotlin + gradle, same setup as Intel Renewed. `./gradlew jar` then `python package.py`.
 - Sol id: system named "Sol" with memory flag `$sr_sol`; `SolSystem.find()` locates it.
