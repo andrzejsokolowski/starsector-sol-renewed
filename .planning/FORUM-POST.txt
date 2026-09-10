@@ -67,6 +67,7 @@ No.
 Four levels in LunaSettings, from none to overrun.
 [/spoiler]
 [spoiler=Version log]
+0.3.4 - fixed Shroud kills not advancing the Glasya-Labolas quest after retreat. Fixed substrate detection and recovery from existing save records.
 0.3.3 — the crisis panel shows a legend of everything that raises the meter instead of repeating the stage descriptions.
 0.3.2 — the translocator can no longer be sold.
 0.3.1 — fixed the missing "Continue" when Glasya-Labolas hands over the translocator.

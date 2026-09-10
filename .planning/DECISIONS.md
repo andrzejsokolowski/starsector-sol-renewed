@@ -61,8 +61,8 @@ Licensing: skipped for now; the mod will be shown to the Bugatti and Solsector a
 - "Transferring Sol", the user's script step by step: bar event (level 10+, Transverse Jump known, shows in every bar
   until accepted) -> Glasya-Labolas (AI, user's own portrait) in the Eochu Bres comm directory -> the conversation as
   written, with "Yes" / "W-What?" (no quest yet) / "No, I don't care" (ends it; talking again offers a restart) /
-  "Skip the quest" (confirmation, then Sol spawns) -> Shroud check = any $defeatedDweller_* key or shrouded substrate
-  in player memory; if none, stage SHROUD until a kill -> Macro-scale Translocator (price 0, no_sell, restored to the
+  "Skip the quest" (confirmation, then Sol spawns) -> Shroud kill check (updated in v0.3.4 below);
+  if none, stage SHROUD until a kill -> Macro-scale Translocator (price 0, no_sell, restored to the
   hold if it goes missing) -> signal beacon in hyperspace 4000 units north of the map edge above Hybrasil (the game's
   abyss is the lower-left corner plus everything outside the map; north inside the map is not abyssal) -> dialog opens
   on arrival -> Sol + Centauri generated mid-game, quest done.
@@ -94,6 +94,17 @@ Licensing: skipped for now; the mod will be shown to the Bugatti and Solsector a
 - afterStageDescriptions now draws a "What raises attention" table: colony founded, each size step, and industry
   expressed as credits-per-point, all scaled by the LunaSettings pace knob, plus live examples read from the industry
   specs so they stay right with other mods installed.
+
+## Round 8: Shroud kill progress (v0.3.4)
+- The vanilla defeated-Dweller flags are set during victory salvage. A kill followed by retreat can miss those flags.
+- The substrate amount in player memory is a temporary number set by the item dialog. The old check read a boolean.
+- A transient battle listener now records destroyed or disabled enemy hulls with Tags.DWELLER, regardless of victory.
+  The permanent quest flag also remembers kills before the quest starts. Player losses and surviving enemies do not count.
+- Existing true vanilla kill flags, positive substrate amounts, and substrate in cargo remain valid evidence for older saves.
+  Loading a save advances SHROUD to RETURN when that evidence exists. A kill without surviving evidence requires another fight.
+- The listener and watcher are installed once per load. The crisis ranges remain unchanged.
+- Validation: jar build and forbidden-API scan passed. The campaign API regression harness covers combat results,
+  older-save evidence, restored memory, repeated installation, and stage guards. An in-game playtest is still needed.
 
 ## Implementation notes (v0.1.0)
 - Kotlin + gradle, same setup as Intel Renewed. `./gradlew jar` then `python package.py`.

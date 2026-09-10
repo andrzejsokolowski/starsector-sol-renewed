@@ -6,11 +6,13 @@ import com.fs.starfarer.api.campaign.SectorEntityToken
 import com.fs.starfarer.api.campaign.SpecialItemData
 import com.fs.starfarer.api.campaign.TextPanelAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.campaign.impl.items.ShroudedSubstratePlugin
 import com.fs.starfarer.api.characters.FullName
 import com.fs.starfarer.api.characters.PersonAPI
 import com.fs.starfarer.api.impl.campaign.WarningBeaconEntityPlugin
 import com.fs.starfarer.api.impl.campaign.ids.Abilities
 import com.fs.starfarer.api.impl.campaign.ids.Factions
+import com.fs.starfarer.api.impl.campaign.ids.Items
 import com.fs.starfarer.api.impl.campaign.ids.Ranks
 import com.fs.starfarer.api.impl.campaign.intel.bar.PortsideBarData
 import com.fs.starfarer.api.impl.campaign.rulecmd.AddRemoveCommodity
@@ -36,6 +38,7 @@ object SolQuest {
 
     const val STAGE_KEY = "\$sr_quest_stage"
     const val INTEL_KEY = "\$sr_quest_ref"
+    const val SHROUD_KILL_KEY = "\$sr_quest_shroud_killed"
     const val PERSON_ID = "sr_glasya_labolas"
     const val PERSON_NAME = "Glasya-Labolas"
     const val MARKET_ID = "eochu_bres"
@@ -69,7 +72,14 @@ object SolQuest {
         ensurePerson()
         ensureBarEvent()
         if (stage == Stage.TRAVEL) ensureSignal()
-        Global.getSector().addTransientScript(SolQuestWatcher())
+        val sector = Global.getSector()
+        if (sector.allListeners.none { it is SolQuestBattleListener }) {
+            sector.addTransientListener(SolQuestBattleListener())
+        }
+        if (!sector.hasTransientScript(SolQuestWatcher::class.java)) {
+            sector.addTransientScript(SolQuestWatcher())
+        }
+        if (stage == Stage.SHROUD && hasShroud()) shroudFound()
     }
 
     fun market(): MarketAPI? = Global.getSector().economy.getMarket(MARKET_ID)
@@ -136,11 +146,25 @@ object SolQuest {
         intel()?.refresh(text)
     }
 
-    /** True once the player has destroyed any shrouded ship (the game records each kill per hull). */
+    /** Battle records cover kills without victory salvage; vanilla records also support older saves. */
     fun hasShroud(): Boolean {
-        val mem = Global.getSector().playerMemoryWithoutUpdate
-        if (mem.getBoolean("\$shroudedSubstrateAvailable")) return true
-        return mem.keys.any { it.startsWith("\$defeatedDweller_") }
+        val sector = Global.getSector()
+        if (sector.memoryWithoutUpdate.getBoolean(SHROUD_KILL_KEY)) return true
+        val mem = sector.playerMemoryWithoutUpdate
+        if (mem.keys.any { it.startsWith("\$defeatedDweller_") && mem.getBoolean(it) }) return true
+        // This is a temporary numeric amount set by the substrate item dialog, not a boolean.
+        val substrate = mem.get(ShroudedSubstratePlugin.SHROUDED_SUBSTRATE_AVAILABLE) as? Number
+        if (substrate != null && substrate.toFloat() > 0f) return true
+        return (sector.playerFleet?.cargo?.getQuantity(
+            com.fs.starfarer.api.campaign.CargoAPI.CargoItemType.SPECIAL,
+            SpecialItemData(Items.SHROUDED_SUBSTRATE, null)
+        ) ?: 0f) > 0f
+    }
+
+    /** Keep the kill even if it happened before accepting the quest or the player retreated afterward. */
+    fun recordShroudKill() {
+        Global.getSector().memoryWithoutUpdate.set(SHROUD_KILL_KEY, true)
+        shroudFound()
     }
 
     fun shroudFound() {

@@ -3,7 +3,7 @@
   "name": "Sol Renewed",
   "author": "Oddisz",
   "utility": "true",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "A gamified Sol system: the eight planets, Pluto, and the moons that matter, at distances you can actually fly. Ashes of the Domain megastructures on Mars and Pluto, a hypershunt around the Sun, a gate, cross-mod planet conditions, a configurable Remnant presence, a colony crisis that grows with everything you build in Sol, and a quest that brings Sol into the Sector. No radiation.",
   "gameVersion": "0.98a-RC8",
   "jars": ["jars/SolRenewed.jar"],

@@ -1,0 +1,5 @@
+Sol Renewed 0.3.4
+
+Fixed a quest progress bug with Glasya-Labolas: destroying a shrouded enemy now counts even if you retreat afterward.
+Existing saves also recognize recorded kills and carried Shrouded Substrate.
+If the game kept no record of an earlier kill and you have no substrate, destroy another shrouded enemy after updating.
