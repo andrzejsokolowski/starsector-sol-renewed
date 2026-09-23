@@ -38,6 +38,8 @@ switch the mod back to generating Sol with the sector at game start.
 - Alpha Centauri (three stars, Proxima b, a guarded Remnant nest with three Radiant wrecks) and
   Beta Centauri about 4 light-years away.
 - Seasonal Industrial Evolution meteor showers while you are in or near Sol.
+- Wide Horizons and Wide Horizons Basic: Sol and the Centauri systems are placed to match the
+  larger map.
 
 ## The colony crisis: "Discovering the Past"
 

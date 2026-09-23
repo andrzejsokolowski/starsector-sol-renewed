@@ -106,6 +106,12 @@ Licensing: skipped for now; the mod will be shown to the Bugatti and Solsector a
 - Validation: jar build and forbidden-API scan passed. The campaign API regression harness covers combat results,
   older-save evidence, restored memory, repeated installation, and stage guards. An in-game playtest is still needed.
 
+## Round 10: Wide Horizons compatibility (v0.3.6)
+- Merged PR #1 by Taiwendo (the Wide Horizons author). WHCompatible.scalePosition runs the vanilla-reference
+  positions of Sol and the Centauri fallbacks through WideHorizonsAPI.getScaledPosition when WideHorizons or
+  WideHorizonsBasic is enabled; any failure falls back to the old coordinates. The API is a compile-only stub in
+  compat-api/ (own Gradle source set, not in the jar). The quest signal already follows sectorHeight.
+
 ## Round 9: forum metadata (v0.3.5)
 - Official forum topic: https://fractalsoftworks.com/forum/index.php?topic=35983.
 - Added modThreadId to mod_info.json and sol_renewed.version using the Hullmods Renewed format.

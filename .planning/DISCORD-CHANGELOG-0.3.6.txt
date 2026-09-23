@@ -1,0 +1,3 @@
+Sol Renewed 0.3.6
+
+Wide Horizons and Wide Horizons Basic compatibility: Sol and the Centauri systems are now placed to match the larger map. Contributed by Taiwendo.
