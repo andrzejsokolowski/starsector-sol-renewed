@@ -18,6 +18,16 @@ kotlin {
 sourceSets.main.java.srcDirs = ['src']
 sourceSets.main.kotlin.srcDirs = ['src']
 
+// Compile-time-only declaration of the optional Wide Horizons API.
+// This source set is not included in SolRenewed.jar; at runtime the real API is
+// supplied by Wide Horizons or Wide Horizons Basic when either mod is enabled.
+sourceSets.create('wideHorizonsApiStub') {
+    java.srcDirs = ['compat-api']
+    compileClasspath = files(fileTree(dir: "${starsectorPath}/starsector-core", include: '*.jar'))
+}
+sourceSets.main.compileClasspath += sourceSets.wideHorizonsApiStub.output
+tasks.named('compileKotlin') { dependsOn tasks.named('compileWideHorizonsApiStubJava') }
+
 repositories {
     mavenCentral()
 }

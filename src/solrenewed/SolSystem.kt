@@ -49,7 +49,10 @@ object SolSystem {
     fun generate(sector: SectorAPI) {
         val sys = sector.createStarSystem("Sol")
         sys.memoryWithoutUpdate.set(MEM_IS_SOL, true)
-        val pos = Uni.findFreeSpot(Vector2f(SrSettings.posX, SrSettings.posY), 6000f)
+        val preferred = WHCompatible.scalePosition(
+            "Sol", Vector2f(SrSettings.posX, SrSettings.posY)
+        )
+        val pos = Uni.findFreeSpot(preferred, 6000f)
         sys.location.set(pos)
         log.info(String.format("[SolRenewed] Sol placed at (%.0f, %.0f)", pos.x, pos.y))
 

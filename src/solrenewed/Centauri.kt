@@ -36,7 +36,11 @@ object Centauri {
     private fun alphaCentauri(sector: SectorAPI, sol: StarSystemAPI?): StarSystemAPI {
         val sys = sector.createStarSystem("Alpha Centauri")
         sys.age = StarAge.OLD
-        val preferred = if (sol != null) Uni.relativePosition(sol, 4.24f, 35f) else Vector2f(-47000f, -37000f)
+        val preferred = if (sol != null) {
+            Uni.relativePosition(sol, 4.24f, 35f)
+        } else {
+            WHCompatible.scalePosition("Alpha Centauri", Vector2f(-47000f, -37000f))
+        }
         val pos = Uni.findFreeSpot(preferred, 8000f)
         sys.location.set(pos)
         log.info(String.format("[SolRenewed] Alpha Centauri placed at (%.0f, %.0f)", pos.x, pos.y))
@@ -83,7 +87,11 @@ object Centauri {
     private fun betaCentauri(sector: SectorAPI, alpha: StarSystemAPI?): StarSystemAPI {
         val sys = sector.createStarSystem("Beta Centauri")
         sys.age = StarAge.OLD
-        val preferred = if (alpha != null) Vector2f(alpha.location.x + 6000f, alpha.location.y + 3000f) else Vector2f(-52000f, -34000f)
+        val preferred = if (alpha != null) {
+            Vector2f(alpha.location.x + 6000f, alpha.location.y + 3000f)
+        } else {
+            WHCompatible.scalePosition("Beta Centauri", Vector2f(-52000f, -34000f))
+        }
         sys.location.set(Uni.findFreeSpot(preferred, 5000f))
         val star = sys.initStar("sr_cen_hadar", "star_blue_giant", 800f, 500f)
         star.name = "Hadar"
