@@ -56,5 +56,5 @@ meter speed, wave strength.
 `./gradlew jar` (needs `starsectorPath` in `gradle.properties`), then `python package.py` to stage
 the release folder and zip it for a mod manager.
 
-After building, run `python tests/run_quest_regression.py` to test quest progress with campaign API fakes.
+After building, run `python tests/run_tests.py` to run the regression tests against campaign API fakes.
 This test requires a JDK and uses the game path from `gradle.properties`. It does not start Starsector.

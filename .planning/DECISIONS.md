@@ -106,6 +106,14 @@ Licensing: skipped for now; the mod will be shown to the Bugatti and Solsector a
 - Validation: jar build and forbidden-API scan passed. The campaign API regression harness covers combat results,
   older-save evidence, restored memory, repeated installation, and stage guards. An in-game playtest is still needed.
 
+## Round 11: patrol objective crash (v0.3.7)
+- Player report: NPE in Objectives.build (spec null) from BaseAssignmentAI's build callback. Vanilla bug: a patrol
+  re-picks the objective type on arrival and builds even when the picker answers null (the set was completed or the
+  last neutral one captured meanwhile). Sol's neutral relay/buoy/array beside two stable locations make it likely.
+- ObjectivePickerGuard: transient BuildObjectiveTypePicker at MOD_SPECIFIC+1 that wraps the best lower-priority
+  picker. On null it tags the stable location FADING_OUT_AND_EXPIRING for one frame (Objectives.build returns on
+  that tag; the engine never reads it) and a saved one-shot script removes the tag. Nothing is built.
+
 ## Round 10: Wide Horizons compatibility (v0.3.6)
 - Merged PR #1 by Taiwendo (the Wide Horizons author). WHCompatible.scalePosition runs the vanilla-reference
   positions of Sol and the Centauri fallbacks through WideHorizonsAPI.getScaledPosition when WideHorizons or

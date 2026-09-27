@@ -11,8 +11,8 @@ import solrenewed.quest.SolQuest;
  * Entry point. Sol and the Centaurus constellation are generated either when a new game is created
  * (after the sector's own procgen so we can find a free spot on the map) or, in the default "quest"
  * mode, at the end of the "Transferring Sol" quest. Everything that must survive a save/load (the
- * cryo-prison dialog hook, the meteor-shower listener, the colony-crisis watcher, the quest watcher)
- * is re-registered on every game load instead of being written into the save.
+ * cryo-prison dialog hook, the meteor-shower listener, the colony-crisis watcher, the quest watcher,
+ * the patrol build-crash guard) is re-registered on every game load instead of being written into the save.
  */
 public class SolRenewedModPlugin extends BaseModPlugin {
 
@@ -53,6 +53,7 @@ public class SolRenewedModPlugin extends BaseModPlugin {
     @Override
     public void onGameLoad(boolean newGame) {
         SrSettings.reload();
+        ObjectivePickerGuard.Companion.install();
         StarSystemAPI sol = SolSystem.INSTANCE.find();
         if (sol != null) {
             installSolRuntime(sol);

@@ -10,18 +10,18 @@ properties = dict(
     if "=" in line and not line.lstrip().startswith("#")
 )
 game = Path(properties["starsectorPath"])
-output = root / "build" / "quest-regression"
+output = root / "build" / "regression-tests"
 output.mkdir(parents=True, exist_ok=True)
 classpath = os.pathsep.join(map(str, [
     root / "jars" / "SolRenewed.jar",
     game / "starsector-core" / "*",
     game / "mods" / "LazyLib-3.0.0" / "jars" / "internal" / "Kotlin-Runtime.jar",
 ]))
+tests = sorted((root / "tests").glob("*Test.java"))
 subprocess.run([
-    "javac", "--release", "17", "-cp", classpath, "-d", str(output),
-    str(root / "tests" / "SolQuestRegressionTest.java"),
+    "javac", "--release", "17", "-cp", classpath, "-d", str(output), *map(str, tests),
 ], check=True)
-subprocess.run([
-    "java", "-Djava.awt.headless=true", "-cp", str(output) + os.pathsep + classpath,
-    "SolQuestRegressionTest",
-], check=True)
+for test in tests:
+    subprocess.run([
+        "java", "-Djava.awt.headless=true", "-cp", str(output) + os.pathsep + classpath, test.stem,
+    ], check=True)
