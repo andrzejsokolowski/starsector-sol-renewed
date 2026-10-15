@@ -241,7 +241,14 @@ class CrisisIntel : BaseEventIntel() {
         Global.getSector().memoryWithoutUpdate.unset(KEY)
     }
 
-    private fun crest(factionId: String): String = Global.getSector().getFaction(factionId).crest
+    /** Falls back to the "unknown" sprite when another mod removed the faction from the sector. */
+    private fun crest(factionId: String): String =
+        Global.getSector().getFaction(factionId)?.crest
+            ?: Global.getSettings().getSpriteName("events", "stage_unknown_bad")
+
+    /** Same, for the faction colors in stage descriptions. */
+    private fun factionColor(factionId: String, fallback: Color): Color =
+        Global.getSector().getFaction(factionId)?.baseUIColor ?: fallback
 
     override fun getStageIconImpl(stageId: Any): String {
         val stage = stageId as? Stage ?: return getIcon()
@@ -345,9 +352,9 @@ class CrisisIntel : BaseEventIntel() {
         val opad = 10f
         val h = Misc.getHighlightColor()
         val bad = Misc.getNegativeHighlightColor()
-        val pirates = Global.getSector().getFaction(Factions.PIRATES).baseUIColor
-        val pathers = Global.getSector().getFaction(Factions.LUDDIC_PATH).baseUIColor
-        val remnants = Global.getSector().getFaction(Factions.REMNANTS).baseUIColor
+        val pirates = factionColor(Factions.PIRATES, bad)
+        val pathers = factionColor(Factions.LUDDIC_PATH, bad)
+        val remnants = factionColor(Factions.REMNANTS, bad)
         when (stage) {
             Stage.START -> {
                 info.addPara(
