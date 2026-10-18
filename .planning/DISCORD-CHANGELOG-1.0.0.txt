@@ -1,0 +1,3 @@
+Sol Renewed 1.0.0
+
+First stable release. No gameplay changes since 0.4.0.
