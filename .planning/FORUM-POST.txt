@@ -34,7 +34,7 @@ The code is fully open source. You don't have to credit me. Claude Code built th
 [/list]
 [hr][center][size=12pt][b]The Colony Crisis: "Discovering the Past"[/b][/size][/center][hr]
 [list]
-[li]Every colony you found in Sol, every size it grows, every industry you build fills a meter in the intel screen. Bigger populations and higher-tech industry count for much more. Nothing lowers it.[/li]
+[li]Every month, your Sol colonies fill a meter in the intel screen: the bigger the colonies and the more expensive their industries, the faster it rises. Nothing lowers it.[/li]
 [li]Pirates and the Luddic Path set up bases nearby and start raiding. Then one of pirates, Pathers or Remnants hits you in force, then two at once, then all three.[/li]
 [li]Survive that and the meter drops back, but every wave after it is bigger. The Remnants come out of the nests in Sol itself.[/li]
 [li]On, off, meter speed and wave strength are all in LunaSettings.[/li]
@@ -67,6 +67,7 @@ No.
 Four levels in LunaSettings, from none to overrun.
 [/spoiler]
 [spoiler=Version log]
+0.4.0 - the crisis meter now rises every month by how big your Sol colonies are and what industries they have, instead of once for each new colony, size or industry. A Sol that stops growing no longer stalls the crisis.
 0.3.7 - fixed a crash when a patrol finished building a comm relay, nav buoy or sensor array that another patrol had already built or captured.
 0.3.6 - Sol and the Centauri systems are placed correctly with Wide Horizons or Wide Horizons Basic. Thanks, Taiwendo.
 0.3.5 - added the official forum link to the mod metadata, version checker, and README.

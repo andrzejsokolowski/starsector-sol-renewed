@@ -20,6 +20,6 @@ sr_cryo_prison,Cryo-detention platform,Boolean,true,,"A Domain-era prison statio
 sr_meteors,Seasonal meteor showers,Boolean,true,,"Needs Industrial Evolution. Meteor showers hit Sol on a seasonal schedule while you are in or near the system.",,,Sol
 ,,,,,,,,
 sr_header_crisis,Crisis Header,Header,"Colony crisis: Discovering the Past",,,,,Sol
-sr_crisis,Enable the Sol colony crisis,Boolean,true,,"Every colony, colony size and industry you add in Sol fills a meter. Crossing its stages brings pirate and Luddic Path bases to the neighbourhood and then raids, bombardment attempts and Remnant attacks on your Sol colonies. Read on every game load; turning it off stops the meter, waves already under way finish.",,,Sol
-sr_crisis_pace,Crisis meter speed,Double,1.0,,"Multiplies every point the meter gains. 0.5 means Sol needs twice as much development before each wave, 2.0 means half.",0.25,4,Sol
+sr_crisis,Enable the Sol colony crisis,Boolean,true,,"Every month, each colony size and each industry you have in Sol adds to a meter. Crossing its stages brings pirate and Luddic Path bases to the neighbourhood and then raids, bombardment attempts and Remnant attacks on your Sol colonies. Read on every game load; turning it off stops the meter, waves already under way finish.",,,Sol
+sr_crisis_pace,Crisis meter speed,Double,1.0,,"Multiplies what the meter gains every month. 0.5 means each wave takes twice as long to come, 2.0 means half as long.",0.25,4,Sol
 sr_crisis_strength,Crisis wave strength,Double,1.0,,"Multiplies the size of every attacking wave. 1.0 is tuned like the game's own colony crises.",0.25,3,Sol

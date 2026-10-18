@@ -1,19 +1,18 @@
 # "Discovering the Past" - the Sol colony crisis (designed 2026-09-05)
 
 The more the player builds in Sol, the more the Sector notices. One event with a meter, like the
-game's Hostile Activity / Hyperspace Topography events. The meter only moves when the player develops
-Sol; nothing ticks by itself.
+game's Hostile Activity / Hyperspace Topography events. Since 0.4.0 the meter rises every month by how
+developed the player's Sol colonies are (0.3.7 and older charged each change once, so a Sol that stopped
+growing stalled the crisis; a tester hit that at 600).
 
-## What fills the meter (flat, one-time)
-| what                                   | points                                                   |
+## What fills the meter (monthly factors)
+| what                                   | points a month                                           |
 |----------------------------------------|----------------------------------------------------------|
-| colony founded in Sol                  | +10                                                      |
-| colony grows a size                    | by head count, not steps: to 4 +5, 5 +15, 6 +40, 7 +100, 8 +250, 9 +600, then x2.5 per size |
-| industry finished (not a structure)    | build cost / 10,000: Farming 8, Mining 10, Refining 23, Heavy Industry 50, Orbital Works 30, AOTD Monoculture Plots 2, Orbital Skunkworks 100, Mining Megaplex 100; upgrades count their own cost |
-All multiplied by the LunaSettings "pace" knob. Only player-owned colonies count. (Round 2: the hypershunt no longer
-counts, and the numbers were reworked from the flat 60/10xsize/40 of v0.2.0 at the user's request.)
-Checked every few days by comparing against a snapshot kept in the event; a save that already has
-developed Sol colonies when the mod is added only gets +10 per existing colony.
+| each size of each colony               | +2 (a size 6 colony is +12)                              |
+| each finished industry (not a structure) | build cost / 50,000, plus the cost of what it was upgraded from: Farming 1.5, Heavy Industry 10, Orbital Works 16, a 1M skunkworks 20. An industry being upgraded keeps counting as what it is |
+All multiplied by the LunaSettings "pace" knob. Only player-owned colonies count. Two rows in the event's
+"Monthly factors" list (colonies, industries), each with a per colony or per industry tooltip. Re-read every
+few days. Old one-time factors in 0.3.7 saves are hidden and expire; the meter keeps its value.
 
 ## Stages (meter 0-1000)
 | meter | stage      | what happens                                                                |

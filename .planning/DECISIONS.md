@@ -106,6 +106,12 @@ Licensing: skipped for now; the mod will be shown to the Bugatti and Solsector a
 - Validation: jar build and forbidden-API scan passed. The campaign API regression harness covers combat results,
   older-save evidence, restored memory, repeated installation, and stage guards. An in-game playtest is still needed.
 
+## Round 12: monthly crisis meter (v0.4.0)
+- Tester report: with Sol fully grown and every nest destroyed the meter sat at 600 and no wave came.
+- Andrzej: no more one-time points. Each colony size adds +2 to the monthly gain. Industries became build cost /
+  50,000 a month with upgrade chains summed (Claude's pick, same balance against colony size as the old numbers).
+- CrisisMonthlyFactor rows; CrisisFactor and Snapshot stay only so 0.3.7 saves load. readResolve adds the factors.
+
 ## Round 11: patrol objective crash (v0.3.7)
 - Player report: NPE in Objectives.build (spec null) from BaseAssignmentAI's build callback. Vanilla bug: a patrol
   re-picks the objective type on arrival and builds even when the picker answers null (the set was completed or the

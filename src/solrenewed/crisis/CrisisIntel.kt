@@ -2,6 +2,8 @@ package solrenewed.crisis
 
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin.ListInfoMode
+import com.fs.starfarer.api.campaign.econ.Industry
+import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.impl.campaign.ids.Factions
 import com.fs.starfarer.api.impl.campaign.ids.Tags
 import com.fs.starfarer.api.impl.campaign.intel.events.BaseEventIntel
@@ -9,6 +11,7 @@ import com.fs.starfarer.api.impl.campaign.intel.events.BaseEventIntel.EventStage
 import com.fs.starfarer.api.impl.campaign.intel.events.BaseEventIntel.StageIconSize
 import com.fs.starfarer.api.impl.campaign.intel.events.BaseFactorTooltip
 import com.fs.starfarer.api.impl.campaign.intel.group.FleetGroupIntel
+import com.fs.starfarer.api.loading.IndustrySpecAPI
 import com.fs.starfarer.api.ui.Alignment
 import com.fs.starfarer.api.ui.SectorMapAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
@@ -22,12 +25,12 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 /**
- * "Discovering the Past": the Sol colony crisis. A meter that only ever climbs when the player
- * develops Sol (colonies, population growth, industries) and that brings pirate and Luddic Path
- * bases to the neighbourhood, then raids, bombardment attempts and Remnant attacks as it crosses
- * its stages. Points scale with what was built: population growth counts people, not size steps,
- * and an industry counts its build cost, so a farm barely registers and a skunkworks does not. Built on the game's own event framework, so it lives in the intel screen
- * next to Hostile Activity with the same progress bar, stage markers and factor lists.
+ * "Discovering the Past": the Sol colony crisis. A meter that climbs every month by how developed the
+ * player's Sol colonies are (every colony size, every industry by its build cost) and that brings
+ * pirate and Luddic Path bases to the neighbourhood, then raids, bombardment attempts and Remnant
+ * attacks as it crosses its stages. A Sol that stops growing still draws attention, it just stops
+ * drawing more of it. Built on the game's own event framework, so it lives in the intel screen next
+ * to Hostile Activity with the same progress bar, stage markers and monthly factor list.
  *
  * Created by [CrisisWatcher] when the first player colony appears in Sol; ends if none is left.
  */
@@ -35,8 +38,11 @@ class CrisisIntel : BaseEventIntel() {
 
     enum class Stage { START, FOOTHOLD, RAID, ASSAULT, RECKONING }
 
-    /** What we last saw of one Sol colony, so growth can be charged for exactly once. */
+    /** Saves from 0.3.7 and older hold these (growth was charged once back then); kept so they load. */
     class Snapshot(var size: Int, var industries: ArrayList<String>)
+
+    /** One line of a monthly factor's breakdown: a colony or an industry and what it adds a month. */
+    class Share(val label: String, val points: Float)
 
     companion object {
         const val KEY = "\$sr_crisis_ref"
@@ -47,24 +53,48 @@ class CrisisIntel : BaseEventIntel() {
         const val P_RECKONING = 1000
         const val RESET_AFTER_RECKONING = 450
 
-        const val POINTS_COLONY = 10
-        /** Credits of build cost per point: Farming (75k) is 8, Heavy Industry (500k) is 50, a 1M skunkworks 100. */
-        const val CREDITS_PER_POINT = 10000f
-        /** Growing to size 4, 5, 6, 7, 8, 9; beyond that each size is 2.5x the last. Roughly follows the head count. */
-        @JvmField val GROWTH_POINTS = intArrayOf(5, 15, 40, 100, 250, 600)
+        /** Every size of every player colony in Sol adds this much to the meter each month. */
+        const val POINTS_PER_SIZE = 2
+        /** Build cost per monthly point: Farming (75k) is 1.5, Heavy Industry (500k) 10, a 1M skunkworks 20. */
+        const val CREDITS_PER_POINT = 50000f
 
+        /** Monthly points for one colony. */
         @JvmStatic
-        fun growthPoints(newSize: Int): Int {
-            val i = newSize - 4
-            if (i < 0) return 0
-            if (i < GROWTH_POINTS.size) return GROWTH_POINTS[i]
-            var p = GROWTH_POINTS.last().toFloat()
-            repeat(i - GROWTH_POINTS.size + 1) { p *= 2.5f }
-            return p.roundToInt()
+        fun colonyPoints(size: Int): Float = (POINTS_PER_SIZE * size).toFloat()
+
+        /** Monthly points for one industry: its build cost plus the cost of everything it was upgraded from. */
+        @JvmStatic
+        fun industryPoints(spec: IndustrySpecAPI): Float {
+            var cost = 0f
+            var curr: IndustrySpecAPI? = spec
+            val seen = HashSet<String>()
+            while (curr != null && seen.add(curr.id)) {
+                cost += curr.cost
+                val down = curr.downgrade
+                curr = if (down.isNullOrEmpty()) null else try {
+                    Global.getSettings().getIndustrySpec(down)
+                } catch (t: Throwable) {
+                    null
+                }
+            }
+            return cost / CREDITS_PER_POINT
         }
 
+        /**
+         * What counts: finished industries, not structures like spaceports or defenses. One being upgraded
+         * keeps counting as what it is until the upgrade is done.
+         */
         @JvmStatic
-        fun industryPoints(cost: Float): Int = maxOf(1, (cost / CREDITS_PER_POINT).roundToInt())
+        fun counted(market: MarketAPI): List<Industry> =
+            market.industries.filter { it.isIndustry && (!it.isBuilding || it.isUpgrading) }
+
+        @JvmStatic
+        fun colonyShares(markets: List<MarketAPI>): List<Share> =
+            markets.map { Share("${it.name}, size ${it.size}", colonyPoints(it.size)) }
+
+        @JvmStatic
+        fun industryShares(markets: List<MarketAPI>): List<Share> =
+            markets.flatMap { m -> counted(m).map { Share("${it.currentName} on ${m.name}", industryPoints(it.spec)) } }
 
         const val ESCALATION_STEP = 0.25f
         const val ESCALATION_MAX = 2.5f
@@ -85,7 +115,7 @@ class CrisisIntel : BaseEventIntel() {
         }
     }
 
-    private var snapshots = HashMap<String, Snapshot>()
+    @Suppress("unused") private var snapshots = HashMap<String, Snapshot>()
     /** Reckonings survived; every one makes later waves bigger. */
     var cycles = 0; private set
     private var waves = ArrayList<FleetGroupIntel>()
@@ -94,12 +124,14 @@ class CrisisIntel : BaseEventIntel() {
     /** Who attacked in the last wave of each stage: stage name -> faction ids. */
     private var stageFactions = HashMap<String, ArrayList<String>>()
     private var interval = IntervalUtil(2f, 4f)
+    /** The breakdown behind the two monthly factors; rebuilt every few days and after every load. */
+    @Transient private var colonies: List<Share>? = null
+    @Transient private var industries: List<Share>? = null
 
     init {
         Global.getSector().memoryWithoutUpdate.set(KEY, this)
         setup()
-        // Added quietly: the first "colony established" factor sends the notification.
-        Global.getSector().intelManager.addIntel(this, true, null)
+        Global.getSector().intelManager.addIntel(this, false, null)
     }
 
     private fun setup() {
@@ -112,10 +144,20 @@ class CrisisIntel : BaseEventIntel() {
         addStage(Stage.ASSAULT, P_ASSAULT, true, StageIconSize.LARGE)
         addStage(Stage.RECKONING, P_RECKONING, true, StageIconSize.LARGE)
         for (s in stages) s.keepIconBrightWhenLaterStageReached = true
+        addMonthlyFactors()
     }
 
-    /** Hook for repairing saves from older versions once the class grows new fields. */
-    protected fun readResolve(): Any = this
+    private fun addMonthlyFactors() {
+        if (factors.any { it is CrisisMonthlyFactor }) return
+        factors.add(CrisisMonthlyFactor(false))
+        factors.add(CrisisMonthlyFactor(true))
+    }
+
+    /** Repairs saves from older versions: 0.3.7 and older charged growth once and had no monthly factors. */
+    protected fun readResolve(): Any {
+        addMonthlyFactors()
+        return this
+    }
 
     /** Escalation from survived Reckonings times the LunaSettings strength knob. */
     fun strengthMult(): Float = min(ESCALATION_MAX, 1f + ESCALATION_STEP * cycles) * SrSettings.crisisStrength
@@ -134,7 +176,7 @@ class CrisisIntel : BaseEventIntel() {
         pruneWaves()
     }
 
-    /** Charges the meter for everything new in Sol since the last look. */
+    /** Re-reads Sol's colonies for the monthly factors; ends the crisis once none is left. */
     fun check() {
         if (isEnding || isEnded) return
         val sol = SolSystem.find() ?: return
@@ -144,37 +186,26 @@ class CrisisIntel : BaseEventIntel() {
             endAfterDelay()
             return
         }
-        if (!SrSettings.crisis) return
-        val seen = HashSet<String>()
-        for (m in markets) {
-            seen.add(m.id)
-            val industries = ArrayList(m.industries.filter { it.isIndustry && !it.isBuilding }.map { it.id })
-            val snap = snapshots[m.id]
-            if (snap == null) {
-                snapshots[m.id] = Snapshot(m.size, industries)
-                add(POINTS_COLONY, "Colony established: ${m.name}")
-                continue
-            }
-            if (m.size > snap.size) {
-                var pts = 0
-                for (s in snap.size + 1..m.size) pts += growthPoints(s)
-                add(pts, "${m.name} grew to size ${m.size}")
-                snap.size = m.size
-            }
-            for (id in industries) {
-                if (id in snap.industries) continue
-                val ind = m.getIndustry(id) ?: continue
-                add(industryPoints(ind.buildCost), "${ind.currentName} on ${m.name}")
-            }
-            snap.industries = industries
-        }
-        snapshots.keys.retainAll(seen)
+        refresh(markets)
     }
 
-    private fun add(points: Int, desc: String) {
-        val p = (points * SrSettings.crisisPace).roundToInt()
-        if (p <= 0) return
-        addFactor(CrisisFactor(desc, p))
+    private fun refresh(markets: List<MarketAPI>) {
+        colonies = colonyShares(markets)
+        industries = industryShares(markets)
+    }
+
+    /** The colonies' or their industries' share of the monthly gain, before the pace setting. */
+    fun shares(ofIndustries: Boolean): List<Share> {
+        if (colonies == null || industries == null) {
+            refresh(SolSystem.find()?.let { Misc.getMarketsInLocation(it, Factions.PLAYER) } ?: emptyList())
+        }
+        return (if (ofIndustries) industries else colonies) ?: emptyList()
+    }
+
+    /** What the colonies or their industries add to the meter this month, after the pace setting. */
+    fun monthly(ofIndustries: Boolean): Int {
+        if (!SrSettings.crisis || isEnding || isEnded) return 0
+        return (shares(ofIndustries).sumOf { it.points.toDouble() } * SrSettings.crisisPace).roundToInt()
     }
 
     // ------------------------------------------------------------------ waves
@@ -226,7 +257,7 @@ class CrisisIntel : BaseEventIntel() {
 
     override fun isEventProgressANegativeThingForThePlayer(): Boolean = true
 
-    override fun withMonthlyFactors(): Boolean = false
+    override fun withOneTimeFactors(): Boolean = false
 
     override fun getBarColor(): Color = Misc.interpolateColor(Misc.getNegativeHighlightColor(), Color.black, 0.25f)
 
@@ -276,6 +307,7 @@ class CrisisIntel : BaseEventIntel() {
         }
         if (!isUpdate) {
             info.addPara("Attention on Sol: %s of %s", initPad, tc, h, "${getProgress()}", "${getMaxProgress()}")
+            info.addPara("Rising %s a month", 0f, tc, h, "+$monthlyProgress")
             if (cycles > 0) info.addPara("Waves %s bigger", 0f, tc, h, "+${escalationPercent()}%")
         }
     }
@@ -292,12 +324,12 @@ class CrisisIntel : BaseEventIntel() {
         addStageDesc(info, stageId, 0f)
     }
 
-    /** Scaled the same way [add] scales real points, so the legend matches what the meter will actually do. */
-    private fun scaled(points: Int): Int = (points * SrSettings.crisisPace).roundToInt()
+    /** Scaled the same way [monthly] scales real points, so the legend matches what the meter will actually do. */
+    private fun scaled(points: Float): String = Misc.getRoundedValueMaxOneAfterDecimal(points * SrSettings.crisisPace)
 
-    private fun industryExample(id: String): Pair<String, Int>? = try {
+    private fun industryExample(id: String): Pair<String, String>? = try {
         val spec = Global.getSettings().getIndustrySpec(id)
-        if (spec == null) null else spec.name to scaled(industryPoints(spec.cost))
+        if (spec == null) null else spec.name to scaled(industryPoints(spec))
     } catch (t: Throwable) {
         null
     }
@@ -314,12 +346,9 @@ class CrisisIntel : BaseEventIntel() {
         val sub = main.beginSubTooltip(width)
         sub.addSectionHeading("What raises attention", faction.baseUIColor, faction.darkUIColor, Alignment.MID, opad)
             .position.setXAlignOffset(0f)
-        sub.beginTable2(faction, 20f, false, false, "In Sol", width - ptsW - 3f, "Points", ptsW)
-        sub.addRow(Alignment.LMID, text, "Colony founded", Alignment.RMID, h, "+${scaled(POINTS_COLONY)}")
-        for (size in 4..9) {
-            sub.addRow(Alignment.LMID, text, "Colony grows to size $size", Alignment.RMID, h, "+${scaled(growthPoints(size))}")
-        }
-        // Expressed as credits-per-point rather than points-per-10k so the pace setting never rounds this to zero.
+        sub.beginTable2(faction, 20f, false, false, "In Sol, every month", width - ptsW - 3f, "Points", ptsW)
+        sub.addRow(Alignment.LMID, text, "Each size of each colony", Alignment.RMID, h, "+${scaled(POINTS_PER_SIZE.toFloat())}")
+        // Expressed as credits-per-point rather than points-per-50k so the pace setting never rounds this to zero.
         val perPoint = CREDITS_PER_POINT / maxOf(0.01f, SrSettings.crisisPace)
         sub.addRow(Alignment.LMID, text, "Industry, per ${Misc.getDGSCredits(perPoint)} to build", Alignment.RMID, h, "+1")
         sub.addTable("", -1, opad)
@@ -328,11 +357,12 @@ class CrisisIntel : BaseEventIntel() {
         main.addCustom(sub, opad)
 
         val examples = listOfNotNull(
-            industryExample("farming"), industryExample("orbitalworks"), industryExample("heavyindustry")
+            industryExample("farming"), industryExample("heavyindustry"), industryExample("orbitalworks")
         )
         if (examples.isNotEmpty()) {
             val label = main.addPara(
-                "For example: " + examples.joinToString(", ") { "${it.first} +${it.second}" } + ".", opad
+                "For example, a month: " + examples.joinToString(", ") { "${it.first} +${it.second}" } +
+                    ". Upgrades also count what they were built on.", opad
             )
             label.setHighlight(*examples.map { "+${it.second}" }.toTypedArray())
             label.setHighlightColors(*examples.map { h }.toTypedArray())
@@ -351,8 +381,8 @@ class CrisisIntel : BaseEventIntel() {
         when (stage) {
             Stage.START -> {
                 info.addPara(
-                    "Sol is the cradle of humanity, and the Sector is starting to remember. Colonies, people and " +
-                        "industry here draw attention.", initPad
+                    "Sol is the cradle of humanity, and the Sector is starting to remember. Every month, the " +
+                        "colonies, people and industry here draw more attention.", initPad
                 )
                 info.addPara("The meter %s.", opad, bad, "never falls on its own")
             }

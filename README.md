@@ -43,9 +43,10 @@ switch the mod back to generating Sol with the sector at game start.
 
 ## The colony crisis: "Discovering the Past"
 
-Colonize Sol and the Sector starts to remember it. New colonies, population growth and industries
-in Sol fill a meter in the intel screen (people and build cost decide how much: a farm barely
-registers, a size-8 world or a skunkworks is a lot); nothing lowers it. At 200 a pirate base and a
+Colonize Sol and the Sector starts to remember it. Every month your Sol colonies fill a meter in
+the intel screen: 2 points per colony size, plus 1 per 50,000 credits of every industry's build cost
+(upgrades count what they were built on, so a farm barely registers and orbital works a lot). It
+keeps rising while you hold Sol, and nothing lowers it. At 200 a pirate base and a
 Luddic Path base move in nearby and a first pirate raid comes. At 450 one of pirates, Pathers or
 Remnants attacks in force, at 700 two of them, at 1000 all three. After that the meter drops to 450
 and every later wave is bigger. Remnants come from the nests in Sol itself. LunaSettings: on/off,
