@@ -14,7 +14,6 @@ No radiation mechanic. Nothing here is a survey-and-forget rock.
 
 
 
-The code is fully open source. You don't have to credit me. Claude Code built this anyway.
 [color=red]Requires [b]LunaLib[/b] and [b]LazyLib[/b].[/color]
 [/b][/center]
 [spoiler=Screenshots]
@@ -66,6 +65,18 @@ No.
 [b]The Remnants are too much / not enough.[/b]
 Four levels in LunaSettings, from none to overrun.
 [/spoiler]
+[spoiler=AI use disclaimer]Some or all assets and code in this mod were created using AI tools:
+[list]
+[li]Code: Claude Code (Claude Opus 5, Claude Opus 5.5 and Claude Fable 5.1)[/li]
+[li]Text (readme and this post): Claude Code (Claude Opus 5, Claude Opus 5.5 and Claude Fable 5.1)[/li]
+[li]Icons: Gemini[/li][/list]
+[/spoiler]
+
+[spoiler=License]
+This mod is under the CC0 (Creative Commons Zero) License, allowing you to do whatever you want with the code, without giving any credit to anyone.
+The planet textures, star art, planet descriptions, the cryo-prison, the Centauri constellation and the music ("Breath of SOL" by Taiwendo) come from Sol Solar System by Bugatti Echelon and keep their authors' terms.
+[/spoiler]
+
 [spoiler=Version log]
 1.0.1 - fixed Sol being left half-built (no Remnants, an empty cryo prison) when it is created alongside a mod that removes the independent faction's portraits. The cryo prison inmates now get the game's default portrait instead.
 1.0.0 - first stable release. No gameplay changes since 0.4.0.
@@ -74,11 +85,11 @@ Four levels in LunaSettings, from none to overrun.
 0.3.6 - Sol and the Centauri systems are placed correctly with Wide Horizons or Wide Horizons Basic. Thanks, Taiwendo.
 0.3.5 - added the official forum link to the mod metadata, version checker, and README.
 0.3.4 - fixed Shroud kills not advancing the Glasya-Labolas quest after retreat. Fixed substrate detection and recovery from existing save records.
-0.3.3 — the crisis panel shows a legend of everything that raises the meter instead of repeating the stage descriptions.
-0.3.2 — the translocator can no longer be sold.
-0.3.1 — fixed the missing "Continue" when Glasya-Labolas hands over the translocator.
-0.3.0 — the "Transferring Sol" quest. Sol is no longer on the map at game start.
-0.2.1 — crisis points now follow population and build cost. Resized Mercury, Venus, Jupiter and Saturn.
-0.2.0 — the "Discovering the Past" colony crisis. Wider orbits.
-0.1.1 — first public build: the system, the cryo-prison, Gungnir Dockyard, configurable Remnants, Alpha and Beta Centauri.
+0.3.3 - the crisis panel shows a legend of everything that raises the meter instead of repeating the stage descriptions.
+0.3.2 - the translocator can no longer be sold.
+0.3.1 - fixed the missing "Continue" when Glasya-Labolas hands over the translocator.
+0.3.0 - the "Transferring Sol" quest. Sol is no longer on the map at game start.
+0.2.1 - crisis points now follow population and build cost. Resized Mercury, Venus, Jupiter and Saturn.
+0.2.0 - the "Discovering the Past" colony crisis. Wider orbits.
+0.1.1 - first public build: the system, the cryo-prison, Gungnir Dockyard, configurable Remnants, Alpha and Beta Centauri.
 [/spoiler]
