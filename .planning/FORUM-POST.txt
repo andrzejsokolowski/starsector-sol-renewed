@@ -67,6 +67,7 @@ No.
 Four levels in LunaSettings, from none to overrun.
 [/spoiler]
 [spoiler=Version log]
+1.0.1 - fixed a crash when Sol is created alongside a mod that removes the independent faction's portraits. The cryo prison inmates now get the game's default portrait instead.
 1.0.0 - first stable release. No gameplay changes since 0.4.0.
 0.4.0 - the crisis meter now rises every month by how big your Sol colonies are and what industries they have, instead of once for each new colony, size or industry. A Sol that stops growing no longer stalls the crisis.
 0.3.7 - fixed a crash when a patrol finished building a comm relay, nav buoy or sensor array that another patrol had already built or captured.

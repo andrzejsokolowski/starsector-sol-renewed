@@ -144,10 +144,13 @@ object CryoPrison {
         return FullName("Inmate", sb.toString(), gender)
     }
 
+    /** The base game's default portrait (settings.json misc.default_portrait), always loaded. */
+    private const val FALLBACK_PORTRAIT = "graphics/portraits/portrait_generic_grayscale.png"
+
     private fun pickPortrait(gender: FullName.Gender): String {
-        val picker = Global.getSector().getFaction("independent").getPortraits(gender)
-        if (picker == null || picker.isEmpty) return Global.getSettings().getSpriteName("characters", "generic")
-        return picker.pick()
+        val picker = Global.getSector().getFaction("independent")?.getPortraits(gender)
+        if (picker == null || picker.isEmpty) return FALLBACK_PORTRAIT
+        return picker.pick() ?: FALLBACK_PORTRAIT
     }
 
     private fun personalityMult(p: PersonAPI, skill: Skill): Float {
