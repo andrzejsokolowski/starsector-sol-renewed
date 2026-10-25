@@ -1,3 +1,0 @@
-Sol Renewed 0.3.7
-
-Fixed a crash when a patrol finished building a comm relay, nav buoy or sensor array that another patrol had already built or captured.

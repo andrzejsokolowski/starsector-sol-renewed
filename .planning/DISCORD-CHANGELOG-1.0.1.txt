@@ -1,3 +1,0 @@
-Sol Renewed 1.0.1
-
-Fixed Sol being left half-built (no Remnants, an empty cryo prison) when it is created alongside a mod that removes the independent faction's portraits. The cryo prison inmates now get the game's default portrait instead.

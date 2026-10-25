@@ -1,3 +1,0 @@
-Sol Renewed 0.4.0
-
-The Discovering the Past crisis meter now rises every month instead of once per change. Each colony size in Sol adds 2 points a month, and each industry adds 1 point a month per 50,000 credits of build cost (upgrades count what they were built on). A Sol that stops growing no longer stalls the crisis. Existing saves keep their meter.
