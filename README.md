@@ -38,6 +38,8 @@ switch the mod back to generating Sol with the sector at game start.
 - Alpha Centauri (three stars, Proxima b, a guarded Remnant nest with three Radiant wrecks) and
   Beta Centauri about 4 light-years away.
 - Seasonal Industrial Evolution meteor showers while you are in or near Sol.
+- The Sol music ("Breath of SOL") keeps playing while you are docked at a planet or station in Sol
+  or Alpha Centauri. Fleet encounters and battles keep their own music. LunaSettings can switch this off.
 - Wide Horizons and Wide Horizons Basic: Sol and the Centauri systems are placed to match the
   larger map.
 

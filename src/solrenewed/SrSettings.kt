@@ -34,6 +34,22 @@ object SrSettings {
     var crisisPace = 1f; private set
     var crisisStrength = 1f; private set
 
+    /** The Sol track keeps playing at planets and stations in Sol and Alpha Centauri. */
+    var keepSolMusic = true; private set
+
+    /** Reads the music setting again, so a change in the LunaLib menu takes effect during play. */
+    @JvmStatic
+    fun keepSolMusicNow(): Boolean {
+        if (ModCheck.hasLunaLib) {
+            try {
+                keepSolMusic = bool("sr_keep_music", keepSolMusic)
+            } catch (t: Throwable) {
+                // keep the last value
+            }
+        }
+        return keepSolMusic
+    }
+
     @JvmStatic
     fun reload() {
         if (!ModCheck.hasLunaLib) {
@@ -58,6 +74,7 @@ object SrSettings {
             plutoStation = bool("sr_pluto_station", plutoStation)
             cryoPrison = bool("sr_cryo_prison", cryoPrison)
             meteors = bool("sr_meteors", meteors)
+            keepSolMusic = bool("sr_keep_music", keepSolMusic)
             crisis = bool("sr_crisis", crisis)
             crisisPace = LunaSettings.getDouble(MOD_ID, "sr_crisis_pace")?.toFloat() ?: crisisPace
             crisisStrength = LunaSettings.getDouble(MOD_ID, "sr_crisis_strength")?.toFloat() ?: crisisStrength

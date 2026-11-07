@@ -1,6 +1,6 @@
 fieldID,fieldName,fieldType,defaultValue,secondaryValue,fieldDescription,minValue,maxValue,tab
 sr_header_sol,Sol Header,Header,Sol,,,,,Sol
-sr_note_newgame,New game note,Text,"The layout settings on this page are read once, when a new game is created; changing them later does not touch an existing save. The meteor shower toggle works at any time.",,,,,Sol
+sr_note_newgame,New game note,Text,"The layout settings on this page are read once, when a new game is created; changing them later does not touch an existing save. The meteor shower and music toggles work at any time.",,,,,Sol
 sr_spawn_sol,Generate Sol,Boolean,true,,"Adds the Sol system to a new sector.",,,Sol
 sr_spawn_mode,When Sol appears,Radio,Quest,"Quest, At game start","Quest: Sol does not exist until you finish the Transferring Sol quest (a bar event at level 10 with Transverse Jump starts it; Glasya-Labolas on Eochu Bres has a skip option). At game start: Sol is generated with the sector like any other system. Read when a new game is created.",,,Sol
 sr_pos_x,Sol map position (horizontal),Double,-10700,,"Where Sol sits on the sector map. If the spot is taken, Sol is nudged to the nearest free space. Default -10700.",-90000,90000,Sol
@@ -18,6 +18,7 @@ sr_pluto_station,Mining station at Pluto,Boolean,true,,"Needs Ashes of the Domai
 sr_header_extras,Extras Header,Header,Extras,,,,,Sol
 sr_cryo_prison,Cryo-detention platform,Boolean,true,,"A Domain-era prison station in the outer system. Break in and wake one of eight prisoner officers.",,,Sol
 sr_meteors,Seasonal meteor showers,Boolean,true,,"Needs Industrial Evolution. Meteor showers hit Sol on a seasonal schedule while you are in or near the system.",,,Sol
+sr_keep_music,Sol music at planets and stations,Boolean,true,,"The Sol soundtrack keeps playing while you are docked at a planet or station in Sol or Alpha Centauri, so the market music no longer cuts it off. Fleet encounters and battles keep their own music. Takes effect within a few seconds, at any time.",,,Sol
 ,,,,,,,,
 sr_header_crisis,Crisis Header,Header,"Colony crisis: Discovering the Past",,,,,Sol
 sr_crisis,Enable the Sol colony crisis,Boolean,true,,"Every month, each colony size and each industry you have in Sol adds to a meter. Crossing its stages brings pirate and Luddic Path bases to the neighbourhood and then raids, bombardment attempts and Remnant attacks on your Sol colonies. Read on every game load; turning it off stops the meter, waves already under way finish.",,,Sol

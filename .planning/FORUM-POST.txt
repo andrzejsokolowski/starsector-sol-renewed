@@ -50,7 +50,7 @@ No radiation mechanic. Nothing here is a survey-and-forget rock.
 [list]
 [li][b]Sol Solar System[/b] by [b]Bugatti Echelon[/b]: the planet textures, star art, the planet descriptions, the cryo-prison and the Centauri constellation all come from there.[/li]
 [li][b]Solsector[/b] by [b]Ugly American[/b]: the Remnant nest approach.[/li]
-[li]Music: [b]"Breath of SOL" by Taiwendo[/b], from Bugatti Echelon's mod. It plays the whole time you are in Sol or Alpha Centauri.[/li]
+[li]Music: [b]"Breath of SOL" by Taiwendo[/b], from Bugatti Echelon's mod. It plays the whole time you are in Sol or Alpha Centauri, also while you are docked at a planet or station there (LunaSettings can switch that off).[/li]
 [/list]
 [/td][/tr][/table][/center]
 [spoiler=FAQ]
@@ -78,6 +78,7 @@ The planet textures, star art, planet descriptions, the cryo-prison, the Centaur
 [/spoiler]
 
 [spoiler=Version log]
+1.1.0 - the Sol music now keeps playing while you are docked at a planet or station in Sol or Alpha Centauri, instead of switching to the market music. Fleet encounters and battles keep their own music. New LunaSettings toggle to switch this off.
 1.0.1 - fixed Sol being left half-built (no Remnants, an empty cryo prison) when it is created alongside a mod that removes the independent faction's portraits. The cryo prison inmates now get the game's default portrait instead.
 1.0.0 - first stable release. No gameplay changes since 0.4.0.
 0.4.0 - the crisis meter now rises every month by how big your Sol colonies are and what industries they have, instead of once for each new colony, size or industry. A Sol that stops growing no longer stalls the crisis.

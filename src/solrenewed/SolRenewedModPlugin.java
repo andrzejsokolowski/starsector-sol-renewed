@@ -54,6 +54,8 @@ public class SolRenewedModPlugin extends BaseModPlugin {
     public void onGameLoad(boolean newGame) {
         SrSettings.reload();
         ObjectivePickerGuard.Companion.install();
+        // Cheap when Sol does not exist yet: it only looks at the system the player is in.
+        SolMusic.install();
         StarSystemAPI sol = SolSystem.INSTANCE.find();
         if (sol != null) {
             installSolRuntime(sol);
