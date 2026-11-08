@@ -50,9 +50,11 @@ the intel screen: 2 points per colony size, plus 1 per 50,000 credits of every i
 (upgrades count what they were built on, so a farm barely registers and orbital works a lot). It
 keeps rising while you hold Sol, and nothing lowers it. At 200 a pirate base and a
 Luddic Path base move in nearby and a first pirate raid comes. At 450 one of pirates, Pathers or
-Remnants attacks in force, at 700 two of them, at 1000 all three. After that the meter drops to 450
-and every later wave is bigger. Remnants come from the nests in Sol itself. LunaSettings: on/off,
-meter speed, wave strength.
+Remnants attacks in force, at 700 two of them, at 1000 all three. After that Reckoning the meter
+and every mark on it get twice as long (2000, then 4000, and so on), so a Sol that keeps growing
+is not attacked faster and faster. The meter drops back to the Raid mark and every later wave is
+bigger. Remnants come from the nests in Sol itself. LunaSettings: on/off, meter speed, wave
+strength, how much longer the meter gets per Reckoning.
 
 ## Building
 

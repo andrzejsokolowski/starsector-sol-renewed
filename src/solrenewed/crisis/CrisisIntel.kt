@@ -29,7 +29,9 @@ import kotlin.math.roundToInt
  * player's Sol colonies are (every colony size, every industry by its build cost) and that brings
  * pirate and Luddic Path bases to the neighbourhood, then raids, bombardment attempts and Remnant
  * attacks as it crosses its stages. A Sol that stops growing still draws attention, it just stops
- * drawing more of it. Built on the game's own event framework, so it lives in the intel screen next
+ * drawing more of it. Every Reckoning survived makes the meter and every mark on it longer (the
+ * "Crisis meter growth per Reckoning" setting), because a Sol that only grows would otherwise be
+ * attacked faster and faster. Built on the game's own event framework, so it lives in the intel screen next
  * to Hostile Activity with the same progress bar, stage markers and monthly factor list.
  *
  * Created by [CrisisWatcher] when the first player colony appears in Sol; ends if none is left.
@@ -99,6 +101,50 @@ class CrisisIntel : BaseEventIntel() {
         const val ESCALATION_STEP = 0.25f
         const val ESCALATION_MAX = 2.5f
 
+        /** One Reckoning never stretches the meter more than this, and the meter never gets longer than [MAX_LENGTH] times 1000. */
+        const val STRETCH_MAX = 4f
+        const val MAX_LENGTH = 64f
+
+        /** How many times its base 1000 points the meter is after [cycles] Reckonings, each stretching it [stretch] times. */
+        @JvmStatic
+        fun lengthFor(cycles: Int, stretch: Float): Float {
+            val s = stretch.coerceIn(1f, STRETCH_MAX)
+            var length = 1f
+            repeat(cycles) { length = min(MAX_LENGTH, length * s) }
+            return length
+        }
+
+        /** Where a stage's mark sits on the base 1000 point meter. */
+        @JvmStatic
+        fun baseMark(stageId: Any?): Int? = when (stageId) {
+            Stage.START -> 0
+            Stage.FOOTHOLD -> P_FOOTHOLD
+            Stage.RAID -> P_RAID
+            Stage.ASSAULT -> P_ASSAULT
+            Stage.RECKONING -> P_RECKONING
+            else -> null
+        }
+
+        @JvmStatic
+        fun markAt(base: Int, length: Float): Int = (base * length).roundToInt()
+
+        /**
+         * The end of a Reckoning: puts every mark and the top of the meter at [length] times their base and drops
+         * the meter to the Raid mark. Fires no stage, however far the marks move: the meter first goes to the new
+         * top (past the Reckoning mark, which is reached already), and only then do the marks move. The climb
+         * that follows fires Assault and Reckoning again at their new marks.
+         */
+        @JvmStatic
+        fun stretchAndDrop(intel: BaseEventIntel, length: Float) {
+            val top = markAt(MAX_PROGRESS, length)
+            intel.setMaxProgress(top)
+            intel.setProgress(top)
+            for (stage in intel.getStages()) {
+                stage.progress = markAt(baseMark(stage.id) ?: continue, length)
+            }
+            intel.setProgress(markAt(RESET_AFTER_RECKONING, length))
+        }
+
         @JvmField val RESET_PARAM = Any()
 
         private val log = Global.getLogger(CrisisIntel::class.java)
@@ -158,6 +204,9 @@ class CrisisIntel : BaseEventIntel() {
         addMonthlyFactors()
         return this
     }
+
+    /** How many times its base 1000 points the meter is now. */
+    fun length(): Float = getMaxProgress() / MAX_PROGRESS.toFloat()
 
     /** Escalation from survived Reckonings times the LunaSettings strength knob. */
     fun strengthMult(): Float = min(ESCALATION_MAX, 1f + ESCALATION_STEP * cycles) * SrSettings.crisisStrength
@@ -239,14 +288,17 @@ class CrisisIntel : BaseEventIntel() {
         if (queued.isNotEmpty()) launch(queued.removeAt(0))
     }
 
-    /** The Reckoning is over: the Sector loses interest for a while, but next time it comes harder. */
+    /**
+     * The Reckoning is over: the meter gets longer, so the next attacks need more attention, and drops back to
+     * the Raid mark. The next waves come harder.
+     */
     private fun finishReckoning() {
         reckoningActive = false
         cycles++
-        setProgress(RESET_AFTER_RECKONING)
+        stretchAndDrop(this, lengthFor(cycles, SrSettings.crisisStretchNow()))
         Waves.ensureBases(this)
         sendUpdateIfPlayerHasIntel(RESET_PARAM, false)
-        log.info("[SolRenewed] Crisis: Reckoning over, cycle $cycles, meter reset to $RESET_AFTER_RECKONING")
+        log.info("[SolRenewed] Crisis: Reckoning over, cycle $cycles, meter now ${getMaxProgress()} long, back at ${getProgress()}")
     }
 
     // -------------------------------------------------------------------- UI
@@ -302,7 +354,8 @@ class CrisisIntel : BaseEventIntel() {
             return
         }
         if (isUpdate && param === RESET_PARAM) {
-            info.addPara("Meter drops to %s; later waves %s bigger", initPad, tc, h, "$RESET_AFTER_RECKONING", "+${escalationPercent()}%")
+            info.addPara("Meter drops to %s of %s", initPad, tc, h, "${getProgress()}", "${getMaxProgress()}")
+            info.addPara("Later waves %s bigger", 0f, tc, h, "+${escalationPercent()}%")
             return
         }
         if (!isUpdate) {
@@ -310,6 +363,14 @@ class CrisisIntel : BaseEventIntel() {
             info.addPara("Rising %s a month", 0f, tc, h, "+$monthlyProgress")
             if (cycles > 0) info.addPara("Waves %s bigger", 0f, tc, h, "+${escalationPercent()}%")
         }
+    }
+
+    /** "twice", "three times", "1.5 times". */
+    private fun timesText(times: Float): String = when (times) {
+        2f -> "twice"
+        3f -> "three times"
+        4f -> "four times"
+        else -> Misc.getRoundedValueMaxOneAfterDecimal(times) + " times"
     }
 
     private fun escalationPercent(): Int = ((min(ESCALATION_MAX, 1f + ESCALATION_STEP * cycles) - 1f) * 100f).roundToInt()
@@ -385,6 +446,12 @@ class CrisisIntel : BaseEventIntel() {
                         "colonies, people and industry here draw more attention.", initPad
                 )
                 info.addPara("The meter %s.", opad, bad, "never falls on its own")
+                if (SrSettings.crisisStretch > 1f) {
+                    info.addPara(
+                        "Every Reckoning you survive makes the meter %s as long, so the next attacks need more attention.",
+                        opad, h, timesText(SrSettings.crisisStretch)
+                    )
+                }
             }
             Stage.FOOTHOLD -> {
                 val label = info.addPara(
@@ -404,11 +471,25 @@ class CrisisIntel : BaseEventIntel() {
                 lastWaveLine(info, stage, opad)
             }
             Stage.RECKONING -> {
-                info.addPara(
-                    "All three at once. Afterwards the meter drops to %s and every later wave is bigger.",
-                    initPad, h, "$RESET_AFTER_RECKONING"
-                )
-                if (cycles > 0) info.addPara("Waves are now %s bigger.", opad, h, "+${escalationPercent()}%")
+                val next = lengthFor(cycles + 1, SrSettings.crisisStretch)
+                if (next > length() + 0.001f) {
+                    info.addPara(
+                        "All three at once. Afterwards the meter becomes %s points long, so the next attacks need " +
+                            "more attention. It drops back to the Raid mark and every later wave is bigger.",
+                        initPad, h, "${markAt(MAX_PROGRESS, next)}"
+                    )
+                } else {
+                    info.addPara(
+                        "All three at once. Afterwards the meter drops back to the Raid mark and every later wave is bigger.",
+                        initPad
+                    )
+                }
+                if (cycles > 0) {
+                    info.addPara(
+                        "Reckonings survived: %s. Waves are now %s bigger.", opad, h,
+                        "$cycles", "+${escalationPercent()}%"
+                    )
+                }
             }
         }
     }

@@ -35,8 +35,8 @@ No radiation mechanic. Nothing here is a survey-and-forget rock.
 [list]
 [li]Every month, your Sol colonies fill a meter in the intel screen: the bigger the colonies and the more expensive their industries, the faster it rises. Nothing lowers it.[/li]
 [li]Pirates and the Luddic Path set up bases nearby and start raiding. Then one of pirates, Pathers or Remnants hits you in force, then two at once, then all three.[/li]
-[li]Survive that and the meter drops back, but every wave after it is bigger. The Remnants come out of the nests in Sol itself.[/li]
-[li]On, off, meter speed and wave strength are all in LunaSettings.[/li]
+[li]Survive that and the meter drops back, but every wave after it is bigger. The meter also gets twice as long each time, so the next attacks need twice the attention and a growing Sol is not attacked faster and faster. The Remnants come out of the nests in Sol itself.[/li]
+[li]On, off, meter speed, wave strength and how much longer the meter gets are all in LunaSettings.[/li]
 [/list]
 [hr][center][size=12pt][b]What Is In The System[/b][/size][/center][hr]
 [list]
@@ -78,6 +78,7 @@ The planet textures, star art, planet descriptions, the cryo-prison, the Centaur
 [/spoiler]
 
 [spoiler=Version log]
+1.2.0 - every Reckoning you survive now makes the crisis meter and every mark on it twice as long, so the next attacks need twice the attention. Before, the marks never moved and a growing Sol was attacked more and more often. New LunaSettings option to change how much longer the meter gets (1 keeps the old fixed marks).
 1.1.0 - the Sol music now keeps playing while you are docked at a planet or station in Sol or Alpha Centauri, instead of switching to the market music. Fleet encounters and battles keep their own music. New LunaSettings toggle to switch this off.
 1.0.1 - fixed Sol being left half-built (no Remnants, an empty cryo prison) when it is created alongside a mod that removes the independent faction's portraits. The cryo prison inmates now get the game's default portrait instead.
 1.0.0 - first stable release. No gameplay changes since 0.4.0.

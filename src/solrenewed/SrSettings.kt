@@ -33,6 +33,8 @@ object SrSettings {
     var crisis = true; private set
     var crisisPace = 1f; private set
     var crisisStrength = 1f; private set
+    /** After every Reckoning survived, the meter and every mark on it get this many times longer (1 = fixed marks). */
+    var crisisStretch = 2f; private set
 
     /** The Sol track keeps playing at planets and stations in Sol and Alpha Centauri. */
     var keepSolMusic = true; private set
@@ -48,6 +50,19 @@ object SrSettings {
             }
         }
         return keepSolMusic
+    }
+
+    /** Reads the meter growth setting again, so a change in the LunaLib menu counts at the next Reckoning's end. */
+    @JvmStatic
+    fun crisisStretchNow(): Float {
+        if (ModCheck.hasLunaLib) {
+            try {
+                crisisStretch = stretch(crisisStretch)
+            } catch (t: Throwable) {
+                // keep the last value
+            }
+        }
+        return crisisStretch
     }
 
     @JvmStatic
@@ -78,10 +93,14 @@ object SrSettings {
             crisis = bool("sr_crisis", crisis)
             crisisPace = LunaSettings.getDouble(MOD_ID, "sr_crisis_pace")?.toFloat() ?: crisisPace
             crisisStrength = LunaSettings.getDouble(MOD_ID, "sr_crisis_strength")?.toFloat() ?: crisisStrength
+            crisisStretch = stretch(crisisStretch)
         } catch (t: Throwable) {
             log.warn("[SolRenewed] Could not read LunaSettings; using defaults.", t)
         }
     }
 
     private fun bool(key: String, default: Boolean): Boolean = LunaSettings.getBoolean(MOD_ID, key) ?: default
+
+    private fun stretch(default: Float): Float =
+        (LunaSettings.getDouble(MOD_ID, "sr_crisis_stretch")?.toFloat() ?: default).coerceIn(1f, 4f)
 }
