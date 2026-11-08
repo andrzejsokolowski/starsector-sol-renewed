@@ -59,12 +59,16 @@ public class CrisisStretchRegressionTest {
 
         check(CrisisIntel.lengthFor(0, 2f) == 1f, "Before any Reckoning the meter is 1000 long");
         check(CrisisIntel.lengthFor(1, 2f) == 2f && CrisisIntel.lengthFor(3, 2f) == 8f,
-            "Every Reckoning doubles the meter at the default setting");
+            "A growth of 2 doubles the meter every Reckoning");
         check(CrisisIntel.lengthFor(2, 1.5f) == 2.25f, "A setting of 1.5 makes it 1.5 times longer each time");
         check(CrisisIntel.lengthFor(5, 1f) == 1f, "A setting of 1 keeps the old fixed marks");
         check(CrisisIntel.lengthFor(1, 10f) == 4f && CrisisIntel.lengthFor(1, 0.5f) == 1f,
             "The setting is held between 1 and 4");
-        check(CrisisIntel.lengthFor(40, 2f) == CrisisIntel.MAX_LENGTH, "The meter stops growing at 64 times its base");
+        check(CrisisIntel.lengthFor(40, 2f) == 8f && CrisisIntel.MAX_LENGTH == 8f, "The meter stops growing at 8000 points");
+        check(solrenewed.SrSettings.INSTANCE.getCrisisStretch() == 1.5f, "Without LunaLib the growth is 1.5 per Reckoning");
+        check(CrisisIntel.lengthFor(1, 1.5f) == 1.5f && CrisisIntel.lengthFor(2, 1.5f) == 2.25f
+            && CrisisIntel.lengthFor(5, 1.5f) == 7.59375f && CrisisIntel.lengthFor(6, 1.5f) == 8f,
+            "At the default: 1500, 2250 ... 7594, then 8000 from the sixth Reckoning on");
 
         Meter m = new Meter();
         m.setProgress(1000);

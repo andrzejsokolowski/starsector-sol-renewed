@@ -34,7 +34,7 @@ object SrSettings {
     var crisisPace = 1f; private set
     var crisisStrength = 1f; private set
     /** After every Reckoning survived, the meter and every mark on it get this many times longer (1 = fixed marks). */
-    var crisisStretch = 2f; private set
+    var crisisStretch = 1.5f; private set
 
     /** The Sol track keeps playing at planets and stations in Sol and Alpha Centauri. */
     var keepSolMusic = true; private set

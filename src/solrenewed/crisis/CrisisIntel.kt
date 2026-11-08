@@ -103,7 +103,7 @@ class CrisisIntel : BaseEventIntel() {
 
         /** One Reckoning never stretches the meter more than this, and the meter never gets longer than [MAX_LENGTH] times 1000. */
         const val STRETCH_MAX = 4f
-        const val MAX_LENGTH = 64f
+        const val MAX_LENGTH = 8f
 
         /** How many times its base 1000 points the meter is after [cycles] Reckonings, each stretching it [stretch] times. */
         @JvmStatic
