@@ -1,0 +1,46 @@
+Version 1.2.1 (2026-11-08)
+- Each Reckoning now makes the crisis meter 1.5 times as long instead of twice (1000, then 1500, 2250, 3375 and so on).
+- The meter now stops growing at 8000 points instead of 64000.
+
+Version 1.2.0 (2026-11-08)
+- Every Reckoning you survive makes the "Discovering the Past" crisis meter and every mark on it longer, so the next attacks need more attention. Before, the marks never moved and a growing Sol was attacked more and more often.
+- New LunaSettings option "Crisis meter growth per Reckoning" (1 to 4, default 2). 1 keeps the old fixed marks.
+- The crisis panel shows how long the meter gets after the next Reckoning and how many Reckonings you have survived.
+
+Version 1.1.0 (2026-11-07)
+- The Sol music keeps playing while you are docked at a planet or station in Sol or Alpha Centauri, instead of switching to the market music. Fleet encounters and battles keep their own music.
+- New LunaSettings toggle "Sol music at planets and stations" (on by default).
+
+Version 1.0.1 (2026-10-25)
+- Fixed Sol being left half-built (no Remnants, an empty cryo prison) when it is created alongside a mod that removes the independent faction's portraits.
+
+Version 1.0.0 (2026-10-18)
+- First stable release. No gameplay changes since 0.4.0.
+
+Version 0.4.0 (2026-10-18)
+- The Discovering the Past crisis meter rises every month instead of once per new colony, size or industry. Each colony size in Sol adds 2 points a month, and each industry adds 1 point a month per 50,000 credits of build cost.
+- Fixed the crisis stalling once Sol stopped growing. Existing saves keep their current meter.
+
+Version 0.3.7 (2026-09-27)
+- Fixed a crash when a patrol finished building a comm relay, nav buoy or sensor array that another patrol had already built or captured.
+
+Version 0.3.6 (2026-09-23)
+- Wide Horizons and Wide Horizons Basic compatibility: Sol and the Centauri systems are placed to match the larger map. Contributed by Taiwendo.
+
+Version 0.3.5 (2026-09-10)
+- Linked to the forum thread and added version checker support.
+
+Version 0.3.4 (2026-09-10)
+- Fixed Shroud kills not advancing the Glasya-Labolas quest.
+
+Version 0.3.3 (2026-09-05)
+- The crisis panel shows a legend instead of repeating the stage descriptions.
+- 0.3.2: the translocator can no longer be sold.
+- 0.3.1: fixed the missing "Continue" when Glasya-Labolas hands over the translocator.
+
+Version 0.3.0 (2026-09-05)
+- New quest "Transferring Sol": Sol appears in the sector when it is finished.
+- 0.2.1: crisis points follow head count and build cost; Mercury, Venus, Jupiter and Saturn resized.
+
+Version 0.2.0 (2026-09-05)
+- New colony crisis "Discovering the Past". Wider orbits.

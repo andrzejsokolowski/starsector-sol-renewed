@@ -1,5 +1,6 @@
 {
     "masterVersionFile":"https://raw.githubusercontent.com/andrzejsokolowski/starsector-sol-renewed/main/sol_renewed.version",
+    "changelogURL":"https://raw.githubusercontent.com/andrzejsokolowski/starsector-sol-renewed/main/changelog.txt",
     "modName":"Sol Renewed",
     "modThreadId":35983,
     "modVersion":
