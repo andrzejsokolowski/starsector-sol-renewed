@@ -31,15 +31,20 @@ public class CrisisMonthlyRegressionTest {
             throw unexpected(name);
         }));
 
-        check(CrisisIntel.colonyPoints(3) == 6f && CrisisIntel.colonyPoints(6) == 12f,
-            "Every colony size adds 2 a month");
-        check(CrisisIntel.industryPoints(specs.get("farming")) == 1.5f, "Farming at 75k adds 1.5 a month");
-        check(CrisisIntel.industryPoints(specs.get("heavyindustry")) == 10f, "Heavy Industry at 500k adds 10 a month");
-        check(CrisisIntel.industryPoints(specs.get("orbitalworks")) == 16f,
-            "An upgrade also counts what it was built on");
-        check(CrisisIntel.industryPoints(specs.get("loop_a")) == 4f, "A looping upgrade chain counts each step once");
-        check(CrisisIntel.industryPoints(specs.get("orphan")) == 1f,
-            "An upgrade of an industry that is not installed counts only itself");
+        check(CrisisIntel.colonyPoints(1) == 0f && CrisisIntel.colonyPoints(3) == 0f, "A colony up to size 3 adds nothing");
+        check(CrisisIntel.colonyPoints(4) == 5f, "Size 4 adds 5 a month");
+        check(CrisisIntel.colonyPoints(5) == 15f && CrisisIntel.colonyPoints(6) == 25f, "Sizes 5 and 6 add 15 and 25 a month");
+        check(CrisisIntel.colonyPoints(7) == 40f && CrisisIntel.colonyPoints(8) == 60f && CrisisIntel.colonyPoints(9) == 80f,
+            "Sizes 7 to 9 add 40, 60 and 80 a month");
+        check(CrisisIntel.colonyPoints(10) == 100f && CrisisIntel.colonyPoints(15) == 100f,
+            "Size 10 adds 100 a month, and bigger Ashes of the Domain sizes stay at 100");
+        check(CrisisIntel.colonyPoints(0) == 0f && CrisisIntel.colonyPoints(-1) == 0f, "A broken size adds nothing");
+        check(CrisisIntel.industryPoints(specs.get("farming")) == 0.375f, "Farming at 75k adds 0.375 a month");
+        check(CrisisIntel.industryPoints(specs.get("heavyindustry")) == 2.5f, "Heavy Industry at 500k adds 2.5 a month");
+        check(CrisisIntel.industryPoints(specs.get("orbitalworks")) == 1.5f,
+            "An upgrade counts only its own cost, not what it was built on");
+        check(CrisisIntel.industryPoints(specs.get("loop_a")) == 0.5f, "A looping upgrade chain is not followed");
+        check(CrisisIntel.industryPoints(specs.get("orphan")) == 0.25f, "An upgrade of an industry that is not installed counts itself");
 
         MarketAPI mars = market("Mars", 6,
             industry("farming", true, false, false),
@@ -47,15 +52,16 @@ public class CrisisMonthlyRegressionTest {
             industry("heavyindustry", true, true, false),
             industry("orphan", false, false, false));
         MarketAPI luna = market("Luna", 3);
-        List<MarketAPI> markets = List.of(mars, luna);
+        MarketAPI earth = market("Earth", 10);
+        List<MarketAPI> markets = List.of(mars, luna, earth);
 
         List<Share> colonies = CrisisIntel.colonyShares(markets);
-        check(colonies.size() == 2 && total(colonies) == 18f, "Colonies of size 6 and 3 add 18 a month");
+        check(colonies.size() == 3 && total(colonies) == 125f, "Colonies of size 6, 3 and 10 add 125 a month");
         check(colonies.get(0).getLabel().equals("Mars, size 6"), "Colony lines name the colony and its size");
 
         List<Share> industries = CrisisIntel.industryShares(markets);
         check(industries.size() == 2, "Structures and industries still under construction do not count");
-        check(total(industries) == 17.5f, "A finished farm and an industry mid upgrade add 17.5 a month");
+        check(total(industries) == 1.875f, "A finished farm and an industry mid upgrade add 1.875 a month");
         check(industries.get(1).getLabel().equals("orbitalworks on Mars"),
             "Industry lines name the industry and the colony");
         check(CrisisIntel.industryShares(List.of(luna)).isEmpty(), "A colony without industries adds no industry line");

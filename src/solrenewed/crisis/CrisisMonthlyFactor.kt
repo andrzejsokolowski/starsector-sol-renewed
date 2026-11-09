@@ -11,7 +11,7 @@ import solrenewed.SrSettings
 /**
  * One row of the crisis' "Monthly factors" list: what the player's Sol colonies, or their industries,
  * add to the meter every month. The numbers are read from Sol by [CrisisIntel]; the tooltip lists
- * every colony or industry with its share.
+ * every colony or industry with its share (the rules themselves are in the panel's legend).
  */
 class CrisisMonthlyFactor(private val industries: Boolean) : BaseEventFactor() {
 
@@ -23,15 +23,7 @@ class CrisisMonthlyFactor(private val industries: Boolean) : BaseEventFactor() {
         override fun createTooltip(tooltip: TooltipMakerAPI, expanded: Boolean, tooltipParam: Any?) {
             val crisis = intel as? CrisisIntel ?: return
             val h = Misc.getHighlightColor()
-            if (industries) {
-                tooltip.addPara(
-                    "Every industry adds %s a month per %s of build cost. An upgrade also counts what it was built on.",
-                    0f, h, "+1", Misc.getDGSCredits(CrisisIntel.CREDITS_PER_POINT)
-                )
-            } else {
-                tooltip.addPara("Every colony adds %s a month per size.", 0f, h, "+${CrisisIntel.POINTS_PER_SIZE}")
-            }
-            var pad = 10f
+            var pad = 0f
             for (share in crisis.shares(industries)) {
                 tooltip.addPara("%s: %s", pad, h, share.label, "+" + Misc.getRoundedValueMaxOneAfterDecimal(share.points))
                     .setHighlightColors(Misc.getTextColor(), h)

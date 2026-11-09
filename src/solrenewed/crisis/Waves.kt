@@ -2,6 +2,7 @@ package solrenewed.crisis
 
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CampaignFleetAPI
+import com.fs.starfarer.api.campaign.FactionAPI
 import com.fs.starfarer.api.campaign.SectorEntityToken
 import com.fs.starfarer.api.campaign.StarSystemAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
@@ -27,9 +28,11 @@ import kotlin.math.roundToInt
 
 /**
  * The retaliation side of the crisis: who attacks Sol, from where, how hard, and the pirate and
- * Luddic Path bases that move into the neighbourhood. Fleets are the game's own "fleet group"
- * raids, the same machinery its colony crises use, so they show up as intel with ETAs, can be
- * intercepted on the way, and go home when beaten.
+ * Luddic Path bases that move into the neighbourhood. One attacker per stage: pirates, the Luddic
+ * Path, the Remnants or one of the Sector's factions (any faction with colonies, modded ones too,
+ * unless the player is on good terms with it). Fleets are the game's own "fleet group" raids, the
+ * same machinery its colony crises use, so they show up as intel with ETAs, can be intercepted on
+ * the way, and go home when beaten.
  */
 object Waves {
 
@@ -39,75 +42,129 @@ object Waves {
     const val BASE_RANGE_LY = 12f
     /** A base further away than this is not used as a launch point; the faction's nearest market is instead. */
     const val SOURCE_RANGE_LY = 25f
-    /** Never more than this many difficulty points per faction per wave (16 huge fleets). */
+    /** Never more than this many difficulty points in one attack (16 huge fleets). */
     const val MAX_BUDGET = 160
+    /** Difficulty points of a 100% attack (the Assault) before the strength settings; 10 is one huge fleet. */
+    const val BASE_BUDGET = 50
+    /** A faction at this standing with the player or better never attacks Sol (30 on the game's -100..100 scale). */
+    const val FRIENDLY_REL = 0.30f
+    /** All the Sector's factions together weigh at most this much in the pick, next to pirates, Path and Remnants. */
+    const val INVADERS_WEIGHT = 6f
 
-    private class Budget(val pirates: Int, val pathers: Int, val remnants: Int)
-
-    private fun budget(stage: CrisisIntel.Stage): Budget = when (stage) {
-        CrisisIntel.Stage.RAID -> Budget(40, 30, 40)
-        CrisisIntel.Stage.ASSAULT -> Budget(60, 45, 55)
-        else -> Budget(90, 60, 75)
+    /** How strong each stage's one attack is: 50%, 75%, 100% and 150% of [BASE_BUDGET]. */
+    @JvmStatic
+    fun stageMult(stage: CrisisIntel.Stage): Float = when (stage) {
+        CrisisIntel.Stage.FOOTHOLD -> 0.5f
+        CrisisIntel.Stage.RAID -> 0.75f
+        CrisisIntel.Stage.ASSAULT -> 1f
+        CrisisIntel.Stage.RECKONING -> 1.5f
+        else -> 0f
     }
 
-    /** Foothold: the bases move in and the pirates send a first, small raiding party to test the defences. */
+    /**
+     * Pirates and Pathers come with fewer, better ships (the game's "quality" fleets) instead of swarms of
+     * junk, so they get (nearly) the full budget. Remnant ships are each worth much more, so they get less of it.
+     */
+    @JvmStatic
+    fun factionMult(factionId: String): Float = when (factionId) {
+        Factions.LUDDIC_PATH -> 0.9f
+        Factions.REMNANTS -> 0.7f
+        else -> 1f
+    }
+
+    /** Difficulty points for one attack: stage, attacker, and the escalation and strength settings. */
+    @JvmStatic
+    fun budget(stage: CrisisIntel.Stage, factionId: String, strength: Float): Int =
+        (BASE_BUDGET * stageMult(stage) * factionMult(factionId) * strength).roundToInt().coerceIn(3, MAX_BUDGET)
+
+    /** Foothold: the bases move in and the pirates send a first raiding party to test the defences. */
     fun foothold(intel: CrisisIntel): List<FleetGroupIntel> {
         val sol = SolSystem.find() ?: return emptyList()
         ensureBases(intel)
         val targets = Misc.getMarketsInLocation(sol, Factions.PLAYER)
         if (targets.isEmpty()) return emptyList()
         val random = Random(intel.getRandom().nextLong())
-        val raid = pirateRaid(sol, targets, listOf(5, 3), random) ?: return emptyList()
+        val points = budget(CrisisIntel.Stage.FOOTHOLD, Factions.PIRATES, intel.strengthMult())
+        val raid = pirateRaid(sol, targets, split(points, 5, 10, random), random) ?: return emptyList()
         intel.noteWave(CrisisIntel.Stage.FOOTHOLD, Factions.PIRATES)
+        log.info("[SolRenewed] Crisis FOOTHOLD: pirates, $points points")
         return listOf(raid)
     }
 
-    /** Raid / Assault / Reckoning: one, two or all three factions at once. */
+    /** Raid / Assault / Reckoning: one attacker each, stronger at every stage. */
     fun launch(intel: CrisisIntel, stage: CrisisIntel.Stage): List<FleetGroupIntel> {
         val sol = SolSystem.find() ?: return emptyList()
         val targets = Misc.getMarketsInLocation(sol, Factions.PLAYER)
         if (targets.isEmpty()) return emptyList()
         val random = Random(intel.getRandom().nextLong())
-        val budget = budget(stage)
-        val mult = intel.strengthMult()
-        val out = ArrayList<FleetGroupIntel>()
-        for (faction in pickFactions(stage, sol, targets, random)) {
+        val strength = intel.strengthMult()
+        val picker = attackers(sol, targets, intel.lastAttacker, random)
+        while (!picker.isEmpty) {
+            val faction = picker.pickAndRemove() ?: break
+            val points = budget(stage, faction, strength)
             val fgi = when (faction) {
-                Factions.PIRATES -> pirateRaid(sol, targets, split(scaled(budget.pirates, mult), 3, 10, random), random)
-                Factions.LUDDIC_PATH -> patherStrike(sol, targets, split(scaled(budget.pathers, mult), 3, 8, random), random)
-                Factions.REMNANTS -> remnantStrike(sol, targets, remnantSizes(scaled(budget.remnants, mult), random), random)
-                else -> null
+                Factions.PIRATES -> pirateRaid(sol, targets, split(points, 5, 10, random), random)
+                Factions.LUDDIC_PATH -> patherStrike(sol, targets, split(points, 5, 10, random), random)
+                Factions.REMNANTS -> remnantStrike(sol, targets, remnantSizes(points, random), random)
+                else -> invasion(faction, sol, targets, split(points, 5, 10, random), random)
             }
             if (fgi != null) {
-                out.add(fgi)
                 intel.noteWave(stage, faction)
+                log.info("[SolRenewed] Crisis ${stage.name}: $faction, $points points, strength x$strength")
+                return listOf(fgi)
             }
         }
-        log.info("[SolRenewed] Crisis ${stage.name}: ${out.size} attack group(s), strength x$mult")
-        return out
+        log.warn("[SolRenewed] Crisis ${stage.name}: nobody could be sent")
+        return emptyList()
     }
 
-    private fun scaled(base: Int, mult: Float): Int = min(MAX_BUDGET, (base * mult).roundToInt())
-
-    private fun pickFactions(stage: CrisisIntel.Stage, sol: StarSystemAPI, targets: List<MarketAPI>, random: Random): List<String> {
-        val count = when (stage) {
-            CrisisIntel.Stage.RAID -> 1
-            CrisisIntel.Stage.ASSAULT -> 2
-            else -> 3
-        }
-        if (count >= 3) return listOf(Factions.PIRATES, Factions.LUDDIC_PATH, Factions.REMNANTS)
-        val picker = WeightedRandomPicker<String>(random)
-        picker.add(Factions.PIRATES, 3f + targets.size)
+    /**
+     * Who may attack this time. The last attacker is much less likely to come again. Remnants weigh more with
+     * more nests in Sol, the Path with more AI cores and heavy industry there.
+     */
+    private fun attackers(sol: StarSystemAPI, targets: List<MarketAPI>, last: String?, random: Random): WeightedRandomPicker<String> {
+        val weights = LinkedHashMap<String, Float>()
+        weights[Factions.PIRATES] = 3f + targets.size
         val interest = targets.maxOf { LuddicPathBaseManager.getLuddicPathMarketInterest(it) }
-        picker.add(Factions.LUDDIC_PATH, 1f + interest / 10f)
-        picker.add(Factions.REMNANTS, 1f + 2f * nests(sol).size)
-        val out = ArrayList<String>()
-        repeat(count) {
-            val pick = picker.pickAndRemove() ?: return out
-            out.add(pick)
-        }
-        return out
+        weights[Factions.LUDDIC_PATH] = 1f + interest / 10f
+        weights[Factions.REMNANTS] = min(4f, 1f + nests(sol).size)
+        val invaders = invaders()
+        val sum = invaders.sumOf { invaderWeight(it).toDouble() }.toFloat()
+        val scale = if (sum > INVADERS_WEIGHT) INVADERS_WEIGHT / sum else 1f
+        for (f in invaders) weights[f.id] = invaderWeight(f) * scale
+        val picker = WeightedRandomPicker<String>(random)
+        for ((id, w) in weights) picker.add(id, if (id == last) w * 0.25f else w)
+        return picker
     }
+
+    private fun invaderWeight(faction: FactionAPI): Float = if (faction.relToPlayer.isHostile) 2f else 1f
+
+    /** Every faction that may invade Sol right now, see [isInvader]. */
+    fun invaders(): List<FactionAPI> {
+        val withMarkets = HashSet<String>()
+        for (m in Global.getSector().economy.marketsCopy) {
+            if (sourceOk(m)) withMarkets.add(m.factionId)
+        }
+        val commission = Misc.getCommissionFactionId()
+        return Global.getSector().allFactions.filter { isInvader(it, withMarkets, commission) }
+    }
+
+    /**
+     * A real faction of the Sector that can send an invasion: shown in the intel screen, with ships and with
+     * a colony to launch from (the same test More Military Missions uses, which keeps out the game's hidden
+     * helper factions), not the player's, not the independents, not the player's commission, and below 30
+     * with the player. Pirates, Path and Remnants have their own attacks.
+     */
+    @JvmStatic
+    fun isInvader(faction: FactionAPI, factionsWithMarkets: Set<String>, commissionId: String?): Boolean {
+        val id = faction.id
+        if (id in SPECIAL_ATTACKERS || id == Factions.PLAYER || id == Factions.INDEPENDENT || id == commissionId) return false
+        if (faction.isPlayerFaction || !faction.isShowInIntelTab) return false
+        if (faction.knownShips.isEmpty() || id !in factionsWithMarkets) return false
+        return faction.relToPlayer.rel < FRIENDLY_REL
+    }
+
+    private val SPECIAL_ATTACKERS = setOf(Factions.PIRATES, Factions.LUDDIC_PATH, Factions.REMNANTS)
 
     /** Splits a difficulty budget into fleets of `lo`..`hi` points (10 = one huge fleet). */
     private fun split(total: Int, lo: Int, hi: Int, random: Random): List<Int> {
@@ -146,7 +203,7 @@ object Waves {
         params.raidParams.where = sol
         params.raidParams.allowedTargets.addAll(targets)
         params.raidParams.allowNonHostileTargets = true
-        params.style = if (random.nextFloat() < 0.33f) FleetStyle.QUANTITY else FleetStyle.STANDARD
+        params.style = FleetStyle.QUALITY
         params.fleetSizes.addAll(sizes)
         reveal(source)
         return post(params)
@@ -177,7 +234,7 @@ object Waves {
         params.raidParams.allowedTargets.add(target)
         params.raidParams.allowNonHostileTargets = true
         params.raidParams.setBombardment(BombardType.SATURATION)
-        params.style = if (random.nextFloat() < 0.33f) FleetStyle.QUANTITY else FleetStyle.STANDARD
+        params.style = FleetStyle.QUALITY
         params.fleetSizes.addAll(sizes)
         reveal(source)
         return post(params)
@@ -188,6 +245,40 @@ object Waves {
         if (base != null) return base.market
         return nearestMarketOfFaction(sol, Factions.LUDDIC_PATH)
     }
+
+    // ---------------------------------------------------------- the Sector
+
+    /** A faction's own war fleets, raiding every colony in Sol like the game's punitive expeditions. */
+    private fun invasion(factionId: String, sol: StarSystemAPI, targets: List<MarketAPI>, sizes: List<Int>, random: Random): FleetGroupIntel? {
+        val source = invasionSource(factionId, sol)
+        if (source == null) {
+            log.warn("[SolRenewed] Crisis: no $factionId colony to launch an invasion from")
+            return null
+        }
+        val params = GenericRaidParams(Random(random.nextLong()), true)
+        params.factionId = factionId
+        params.source = source
+        params.prepDays = 14f + random.nextFloat() * 14f
+        params.payloadDays = 27f + 7f * random.nextFloat()
+        params.raidParams.where = sol
+        params.raidParams.allowedTargets.addAll(targets)
+        params.raidParams.allowNonHostileTargets = true
+        params.style = FleetStyle.STANDARD
+        params.fleetSizes.addAll(sizes)
+        return post(params)
+    }
+
+    /** The faction's best launch point: big colonies with a military base first, then the nearest. */
+    private fun invasionSource(factionId: String, sol: StarSystemAPI): MarketAPI? =
+        Global.getSector().economy.marketsCopy
+            .filter { it.factionId == factionId && sourceOk(it) }
+            .maxByOrNull {
+                val military = it.hasIndustry("militarybase") || it.hasIndustry("highcommand")
+                it.size * 3f + (if (military) 5f else 0f) - Misc.getDistanceLY(it.locationInHyperspace, sol.location) / 4f
+            }
+
+    private fun sourceOk(m: MarketAPI): Boolean =
+        m.primaryEntity != null && !m.isPlanetConditionMarketOnly && !m.isHidden && m.starSystem != null
 
     // --------------------------------------------------------------- Remnants
 

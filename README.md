@@ -46,15 +46,21 @@ switch the mod back to generating Sol with the sector at game start.
 ## The colony crisis: "Discovering the Past"
 
 Colonize Sol and the Sector starts to remember it. Every month your Sol colonies fill a meter in
-the intel screen: 2 points per colony size, plus 1 per 50,000 credits of every industry's build cost
-(upgrades count what they were built on, so a farm barely registers and orbital works a lot). It
-keeps rising while you hold Sol, and nothing lowers it. At 200 a pirate base and a
-Luddic Path base move in nearby and a first pirate raid comes. At 450 one of pirates, Pathers or
-Remnants attacks in force, at 700 two of them, at 1000 all three. After that Reckoning the meter
-and every mark on it get 1.5 times as long (1500, then 2250, 3375 and so on, up to 8000), so a Sol
-that keeps growing is not attacked faster and faster. The meter drops back to the Raid mark and every later wave is
-bigger. Remnants come from the nests in Sol itself. LunaSettings: on/off, meter speed, wave
-strength, how much longer the meter gets per Reckoning.
+the intel screen. Big colonies count far more than small ones: nothing up to size 3, then 5, 15,
+25, 40, 60 and 80 for sizes 4 to 9, and 100 from size 10 on. Every industry adds 1 per 200,000
+credits of its own build cost (what it was upgraded from does not count). The meter keeps rising
+while you hold Sol, and nothing lowers it.
+
+Every mark on the meter brings one attack, each stronger than the last: at 200 a pirate base and
+a Luddic Path base move in nearby and a pirate raid comes (50%), at 450 a strike force (75%), at
+700 a war fleet (100%), at 1000 an armada (150%). The attacker is the pirates, the Luddic Path,
+the Remnants from the nests in Sol, or one of the Sector's factions: any faction with colonies,
+modded ones too, unless you stand at 30 or better with it, it holds your commission, or it is the
+independents. Pirates and Pathers send fewer, better ships, and Remnant attacks are smaller.
+
+After the Reckoning the meter and every mark on it get 1.5 times as long (1500, then 2250, 3375
+and so on, up to 8000), the meter drops back to the Raid mark and every later attack is stronger.
+LunaSettings: on/off, meter speed, attack strength, how much longer the meter gets per Reckoning.
 
 ## Building
 

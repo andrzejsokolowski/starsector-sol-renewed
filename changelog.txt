@@ -1,3 +1,11 @@
+Version 1.3.0 (2026-11-09)
+- The crisis now sends one attack per stage, each stronger than the last (50%, 75%, 100% and 150%), instead of up to three at once. Attacks are smaller overall.
+- Any of the Sector's factions can now invade Sol, modded ones too, except factions you stand at 30 or better with, your commission faction and the independents.
+- Pirates and Pathers come with fewer, better ships. Remnant attacks are smaller.
+- Big colonies now raise the crisis meter far more than small ones: nothing up to size 3, 15 and 25 at sizes 5 and 6, 100 from size 10 on.
+- Industries count only their own build cost, at 1 point per 200,000 credits (was 50,000, upgrades included).
+- Every crisis stage has its own picture, and the crisis texts are rewritten.
+
 Version 1.2.1 (2026-11-08)
 - Each Reckoning now makes the crisis meter 1.5 times as long instead of twice (1000, then 1500, 2250, 3375 and so on).
 - The meter now stops growing at 8000 points instead of 64000.

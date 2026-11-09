@@ -33,10 +33,11 @@ No radiation mechanic. Nothing here is a survey-and-forget rock.
 [/list]
 [hr][center][size=12pt][b]The Colony Crisis: "Discovering the Past"[/b][/size][/center][hr]
 [list]
-[li]Every month, your Sol colonies fill a meter in the intel screen: the bigger the colonies and the more expensive their industries, the faster it rises. Nothing lowers it.[/li]
-[li]Pirates and the Luddic Path set up bases nearby and start raiding. Then one of pirates, Pathers or Remnants hits you in force, then two at once, then all three.[/li]
-[li]Survive that and the meter drops back, but every wave after it is bigger. The meter also gets 1.5 times as long each time (up to 8000 points), so the next attacks need more attention and a growing Sol is not attacked faster and faster. The Remnants come out of the nests in Sol itself.[/li]
-[li]On, off, meter speed, wave strength and how much longer the meter gets are all in LunaSettings.[/li]
+[li]Every month, your Sol colonies fill a meter in the intel screen. A size 10 colony draws far more eyes than a size 4 one, and industries add a little on top. Nothing lowers it.[/li]
+[li]Pirates and the Luddic Path set up bases nearby. Then every stage of the meter brings one attack, each stronger than the last: a raid, a strike force, a war fleet, an armada.[/li]
+[li]The attacker can be the pirates, the Luddic Path, the Remnants out of the nests in Sol itself, or one of the Sector's factions, modded ones included. Factions you are on good terms with stay out of it.[/li]
+[li]Survive the armada and the meter drops back and gets 1.5 times as long (up to 8000 points), but every attack after it is stronger.[/li]
+[li]On, off, meter speed, attack strength and how much longer the meter gets are all in LunaSettings.[/li]
 [/list]
 [hr][center][size=12pt][b]What Is In The System[/b][/size][/center][hr]
 [list]
@@ -78,6 +79,7 @@ The planet textures, star art, planet descriptions, the cryo-prison, the Centaur
 [/spoiler]
 
 [spoiler=Version log]
+1.3.0 - the crisis now sends one attack per stage, each stronger than the last, instead of up to three at once, and attacks are smaller overall. Any of the Sector's factions can now invade Sol (modded ones too), except those you stand at 30 or better with. Pirates and Pathers come with fewer, better ships, and Remnant attacks are smaller. Big colonies now raise the meter far more than small ones (size 10 gives 100 a month, size 3 nothing), and industries count only their own build cost, much less than before. Every stage has its own picture, and the crisis texts are rewritten.
 1.2.1 - each Reckoning now makes the crisis meter 1.5 times as long instead of twice, and the meter stops growing at 8000 points instead of 64000.
 1.2.0 - every Reckoning you survive now makes the crisis meter and every mark on it twice as long, so the next attacks need twice the attention. Before, the marks never moved and a growing Sol was attacked more and more often. New LunaSettings option to change how much longer the meter gets (1 keeps the old fixed marks).
 1.1.0 - the Sol music now keeps playing while you are docked at a planet or station in Sol or Alpha Centauri, instead of switching to the market music. Fleet encounters and battles keep their own music. New LunaSettings toggle to switch this off.

@@ -26,9 +26,9 @@ import kotlin.math.roundToInt
 
 /**
  * "Discovering the Past": the Sol colony crisis. A meter that climbs every month by how developed the
- * player's Sol colonies are (every colony size, every industry by its build cost) and that brings
- * pirate and Luddic Path bases to the neighbourhood, then raids, bombardment attempts and Remnant
- * attacks as it crosses its stages. A Sol that stops growing still draws attention, it just stops
+ * player's Sol colonies are (colony size on a steep curve, every industry by its own build cost) and
+ * that brings pirate and Luddic Path bases to the neighbourhood, then one attack per stage, each
+ * stronger than the last (see [Waves]). A Sol that stops growing still draws attention, it just stops
  * drawing more of it. Every Reckoning survived makes the meter and every mark on it longer (the
  * "Crisis meter growth per Reckoning" setting), because a Sol that only grows would otherwise be
  * attacked faster and faster. Built on the game's own event framework, so it lives in the intel screen next
@@ -55,32 +55,26 @@ class CrisisIntel : BaseEventIntel() {
         const val P_RECKONING = 1000
         const val RESET_AFTER_RECKONING = 450
 
-        /** Every size of every player colony in Sol adds this much to the meter each month. */
-        const val POINTS_PER_SIZE = 2
-        /** Build cost per monthly point: Farming (75k) is 1.5, Heavy Industry (500k) 10, a 1M skunkworks 20. */
-        const val CREDITS_PER_POINT = 50000f
+        /**
+         * Monthly points by colony size: nothing up to size 3, 15 and 25 at sizes 5 and 6, 100 from size 10 on
+         * (Ashes of the Domain sizes past 10 stay at 100). A size 10 colony holds tens of billions, a size 4 ten
+         * thousand, so the curve climbs steeply.
+         */
+        @JvmField val SIZE_POINTS = intArrayOf(0, 0, 0, 0, 5, 15, 25, 40, 60, 80, 100)
+
+        /** Own build cost per monthly point: Farming (75k) is 0.4, Heavy Industry (500k) 2.5, a 1M building 5. */
+        const val CREDITS_PER_POINT = 200000f
 
         /** Monthly points for one colony. */
         @JvmStatic
-        fun colonyPoints(size: Int): Float = (POINTS_PER_SIZE * size).toFloat()
+        fun colonyPoints(size: Int): Float = SIZE_POINTS[size.coerceIn(0, SIZE_POINTS.size - 1)].toFloat()
 
-        /** Monthly points for one industry: its build cost plus the cost of everything it was upgraded from. */
+        /**
+         * Monthly points for one industry: its own build cost only. What it was upgraded from does not count,
+         * because Ashes of the Domain upgrade chains are long.
+         */
         @JvmStatic
-        fun industryPoints(spec: IndustrySpecAPI): Float {
-            var cost = 0f
-            var curr: IndustrySpecAPI? = spec
-            val seen = HashSet<String>()
-            while (curr != null && seen.add(curr.id)) {
-                cost += curr.cost
-                val down = curr.downgrade
-                curr = if (down.isNullOrEmpty()) null else try {
-                    Global.getSettings().getIndustrySpec(down)
-                } catch (t: Throwable) {
-                    null
-                }
-            }
-            return cost / CREDITS_PER_POINT
-        }
+        fun industryPoints(spec: IndustrySpecAPI): Float = spec.cost / CREDITS_PER_POINT
 
         /**
          * What counts: finished industries, not structures like spaceports or defenses. One being upgraded
@@ -169,6 +163,8 @@ class CrisisIntel : BaseEventIntel() {
     private var reckoningActive = false
     /** Who attacked in the last wave of each stage: stage name -> faction ids. */
     private var stageFactions = HashMap<String, ArrayList<String>>()
+    /** The faction of the last attack, any stage; it is less likely to come again next. Null in older saves. */
+    var lastAttacker: String? = null; private set
     private var interval = IntervalUtil(2f, 4f)
     /** The breakdown behind the two monthly factors; rebuilt every few days and after every load. */
     @Transient private var colonies: List<Share>? = null
@@ -212,7 +208,8 @@ class CrisisIntel : BaseEventIntel() {
     fun strengthMult(): Float = min(ESCALATION_MAX, 1f + ESCALATION_STEP * cycles) * SrSettings.crisisStrength
 
     fun noteWave(stage: Stage, factionId: String) {
-        stageFactions.getOrPut(stage.name) { ArrayList() }.add(factionId)
+        stageFactions[stage.name] = arrayListOf(factionId)
+        lastAttacker = factionId
     }
 
     // ---------------------------------------------------------------- ticking
@@ -324,20 +321,10 @@ class CrisisIntel : BaseEventIntel() {
         Global.getSector().memoryWithoutUpdate.unset(KEY)
     }
 
-    private fun crest(factionId: String): String = Global.getSector().getFaction(factionId).crest
-
+    /** Every stage has its own picture (graphics/icons/crisis/), like the game's Hyperspace Topography event. */
     override fun getStageIconImpl(stageId: Any): String {
         val stage = stageId as? Stage ?: return getIcon()
-        val reached = isStageActive(stageId)
-        return when (stage) {
-            Stage.START -> getIcon()
-            Stage.FOOTHOLD -> if (reached) crest(Factions.PIRATES) else Global.getSettings().getSpriteName("events", "stage_unknown_bad")
-            Stage.RECKONING -> if (reached) crest(Factions.REMNANTS) else Global.getSettings().getSpriteName("events", "stage_unknown_bad")
-            else -> {
-                val f = stageFactions[stage.name]?.firstOrNull()
-                if (reached && f != null) crest(f) else Global.getSettings().getSpriteName("events", "stage_unknown_bad")
-            }
-        }
+        return Global.getSettings().getSpriteName("events", "sr_crisis_" + stage.name)
     }
 
     override fun addBulletPoints(info: TooltipMakerAPI, mode: ListInfoMode, isUpdate: Boolean, tc: Color, initPad: Float) {
@@ -346,39 +333,30 @@ class CrisisIntel : BaseEventIntel() {
         val param = listInfoParam
         if (isUpdate && param is EventStageData) {
             when (param.id) {
-                Stage.FOOTHOLD -> info.addPara("Pirates and the Luddic Path move in near Sol", tc, initPad)
-                Stage.RAID -> info.addPara("An attack on Sol is coming", tc, initPad)
-                Stage.ASSAULT -> info.addPara("Two attacks on Sol are coming", tc, initPad)
-                Stage.RECKONING -> info.addPara("Everyone is coming for Sol", tc, initPad)
+                Stage.FOOTHOLD -> info.addPara("Raiders make camp near Sol", tc, initPad)
+                Stage.RAID -> info.addPara("A strike force sets course for Sol", tc, initPad)
+                Stage.ASSAULT -> info.addPara("A war fleet sets course for Sol", tc, initPad)
+                Stage.RECKONING -> info.addPara("An armada sets course for Sol", tc, initPad)
             }
             return
         }
         if (isUpdate && param === RESET_PARAM) {
-            info.addPara("Meter drops to %s of %s", initPad, tc, h, "${getProgress()}", "${getMaxProgress()}")
-            info.addPara("Later waves %s bigger", 0f, tc, h, "+${escalationPercent()}%")
+            info.addPara("The attackers fall back, for now", tc, initPad)
+            info.addPara("Attention on Sol: %s of %s", 0f, tc, h, "${getProgress()}", "${getMaxProgress()}")
             return
         }
         if (!isUpdate) {
             info.addPara("Attention on Sol: %s of %s", initPad, tc, h, "${getProgress()}", "${getMaxProgress()}")
             info.addPara("Rising %s a month", 0f, tc, h, "+$monthlyProgress")
-            if (cycles > 0) info.addPara("Waves %s bigger", 0f, tc, h, "+${escalationPercent()}%")
+            if (cycles > 0) info.addPara("Attacks %s stronger", 0f, tc, h, "+${escalationPercent()}%")
         }
-    }
-
-    /** "twice", "three times", "1.5 times". */
-    private fun timesText(times: Float): String = when (times) {
-        2f -> "twice"
-        3f -> "three times"
-        4f -> "four times"
-        else -> Misc.getRoundedValueMaxOneAfterDecimal(times) + " times"
     }
 
     private fun escalationPercent(): Int = ((min(ESCALATION_MAX, 1f + ESCALATION_STEP * cycles) - 1f) * 100f).roundToInt()
 
     /**
-     * Only the opening blurb gets a row of its own; every stage past it is explained by the tooltip on
-     * its marker above the bar, so repeating all of them down the panel is just noise. A stage whose
-     * text adds nothing has its whole row skipped by the game.
+     * Only the opening blurb gets a row of its own; every later stage has its text in the tooltip on its
+     * marker above the bar. A stage whose text adds nothing has its whole row skipped by the game.
      */
     override fun addStageDescriptionText(info: TooltipMakerAPI, width: Float, stageId: Any) {
         if (stageId !== Stage.START) return
@@ -388,14 +366,7 @@ class CrisisIntel : BaseEventIntel() {
     /** Scaled the same way [monthly] scales real points, so the legend matches what the meter will actually do. */
     private fun scaled(points: Float): String = Misc.getRoundedValueMaxOneAfterDecimal(points * SrSettings.crisisPace)
 
-    private fun industryExample(id: String): Pair<String, String>? = try {
-        val spec = Global.getSettings().getIndustrySpec(id)
-        if (spec == null) null else spec.name to scaled(industryPoints(spec))
-    } catch (t: Throwable) {
-        null
-    }
-
-    /** The legend: everything that moves the meter, with the numbers this game is actually using. */
+    /** The legend: what moves the meter, with the numbers this game is actually using. */
     override fun afterStageDescriptions(main: TooltipMakerAPI) {
         val opad = 10f
         val faction = factionForUIColors
@@ -408,85 +379,63 @@ class CrisisIntel : BaseEventIntel() {
         sub.addSectionHeading("What raises attention", faction.baseUIColor, faction.darkUIColor, Alignment.MID, opad)
             .position.setXAlignOffset(0f)
         sub.beginTable2(faction, 20f, false, false, "In Sol, every month", width - ptsW - 3f, "Points", ptsW)
-        sub.addRow(Alignment.LMID, text, "Each size of each colony", Alignment.RMID, h, "+${scaled(POINTS_PER_SIZE.toFloat())}")
-        // Expressed as credits-per-point rather than points-per-50k so the pace setting never rounds this to zero.
+        val last = SIZE_POINTS.size - 1
+        for (size in SIZE_POINTS.indices) {
+            if (SIZE_POINTS[size] <= 0) continue
+            val label = if (size == last) "Colony, size $size and up" else "Colony, size $size"
+            sub.addRow(Alignment.LMID, text, label, Alignment.RMID, h, "+${scaled(SIZE_POINTS[size].toFloat())}")
+        }
+        // Expressed as credits-per-point rather than points-per-credit so the pace setting never rounds this to zero.
         val perPoint = CREDITS_PER_POINT / maxOf(0.01f, SrSettings.crisisPace)
         sub.addRow(Alignment.LMID, text, "Industry, per ${Misc.getDGSCredits(perPoint)} to build", Alignment.RMID, h, "+1")
         sub.addTable("", -1, opad)
         sub.prev.position.setXAlignOffset(-5f)
         main.endSubTooltip()
         main.addCustom(sub, opad)
-
-        val examples = listOfNotNull(
-            industryExample("farming"), industryExample("heavyindustry"), industryExample("orbitalworks")
-        )
-        if (examples.isNotEmpty()) {
-            val label = main.addPara(
-                "For example, a month: " + examples.joinToString(", ") { "${it.first} +${it.second}" } +
-                    ". Upgrades also count what they were built on.", opad
-            )
-            label.setHighlight(*examples.map { "+${it.second}" }.toTypedArray())
-            label.setHighlightColors(*examples.map { h }.toTypedArray())
-        }
-        main.addPara("Nothing else raises it. Hover a marker above the bar to see what that stage brings.", opad)
     }
 
     private fun addStageDesc(info: TooltipMakerAPI, stageId: Any, initPad: Float) {
         val stage = stageId as? Stage ?: return
         val opad = 10f
         val h = Misc.getHighlightColor()
-        val bad = Misc.getNegativeHighlightColor()
         val pirates = Global.getSector().getFaction(Factions.PIRATES).baseUIColor
         val pathers = Global.getSector().getFaction(Factions.LUDDIC_PATH).baseUIColor
-        val remnants = Global.getSector().getFaction(Factions.REMNANTS).baseUIColor
         when (stage) {
             Stage.START -> {
                 info.addPara(
-                    "Sol is the cradle of humanity, and the Sector is starting to remember. Every month, the " +
-                        "colonies, people and industry here draw more attention.", initPad
+                    "Sol is the cradle of humanity, and the Sector is starting to remember. Every colony, every " +
+                        "soul and every factory here draws more eyes to it.", initPad
                 )
-                info.addPara("The meter %s.", opad, bad, "never falls on its own")
-                if (SrSettings.crisisStretch > 1f) {
-                    info.addPara(
-                        "Every Reckoning you survive makes the meter %s as long, so the next attacks need more attention.",
-                        opad, h, timesText(SrSettings.crisisStretch)
-                    )
-                }
+                info.addPara(
+                    "Beat back these ever stronger attacks, and in time the factions of the Persean Sector will " +
+                        "learn that taking Sol is a futile endeavour" +
+                        (if (SrSettings.crisisStretch > 1f) ", and they will come less often" else "") +
+                        ". But they will not stop. Not until Sol has a deterrent.", opad
+                )
             }
             Stage.FOOTHOLD -> {
                 val label = info.addPara(
-                    "Pirates and the Luddic Path set up bases near Sol. A first pirate raid follows.", initPad
+                    "Pirate crews and Pather cells make camp in the dark systems around Sol. The first raiders " +
+                        "come to test its defences.", initPad
                 )
-                label.setHighlight("Pirates", "Luddic Path")
+                label.setHighlight("Pirate", "Pather")
                 label.setHighlightColors(pirates, pathers)
+                lastWaveLine(info, stage, opad)
             }
             Stage.RAID -> {
-                val label = info.addPara("One of pirates, Pathers or Remnants attacks in force.", initPad)
-                label.setHighlight("pirates", "Pathers", "Remnants")
-                label.setHighlightColors(pirates, pathers, remnants)
+                info.addPara("Word of Sol's wealth travels. Someone sends a strike force to take a closer look.", initPad)
                 lastWaveLine(info, stage, opad)
             }
             Stage.ASSAULT -> {
-                info.addPara("Two of them at once.", initPad)
+                info.addPara("What came to probe now comes to conquer: a war fleet, larger than the last.", initPad)
                 lastWaveLine(info, stage, opad)
             }
             Stage.RECKONING -> {
-                val next = lengthFor(cycles + 1, SrSettings.crisisStretch)
-                if (next > length() + 0.001f) {
-                    info.addPara(
-                        "All three at once. Afterwards the meter becomes %s points long, so the next attacks need " +
-                            "more attention. It drops back to the Raid mark and every later wave is bigger.",
-                        initPad, h, "${markAt(MAX_PROGRESS, next)}"
-                    )
-                } else {
-                    info.addPara(
-                        "All three at once. Afterwards the meter drops back to the Raid mark and every later wave is bigger.",
-                        initPad
-                    )
-                }
+                info.addPara("The Sector gives its answer to the cradle of humanity: an armada.", initPad)
+                lastWaveLine(info, stage, opad)
                 if (cycles > 0) {
                     info.addPara(
-                        "Reckonings survived: %s. Waves are now %s bigger.", opad, h,
+                        "Reckonings survived: %s. Attacks %s stronger.", opad, h,
                         "$cycles", "+${escalationPercent()}%"
                     )
                 }
@@ -495,13 +444,12 @@ class CrisisIntel : BaseEventIntel() {
     }
 
     private fun lastWaveLine(info: TooltipMakerAPI, stage: Stage, pad: Float) {
-        val ids = stageFactions[stage.name] ?: return
-        val factions = ids.mapNotNull { Global.getSector().getFaction(it) }
-        if (factions.isEmpty()) return
-        val names = factions.map { it.displayName }
-        val label = info.addPara((if (waves.isNotEmpty()) "Current attackers: " else "Last attackers: ") + names.joinToString(", "), pad)
-        label.setHighlight(*names.toTypedArray())
-        label.setHighlightColors(*factions.map { it.baseUIColor }.toTypedArray())
+        val id = stageFactions[stage.name]?.lastOrNull() ?: return
+        val faction = Global.getSector().getFaction(id) ?: return
+        val name = faction.displayName
+        val label = info.addPara((if (waves.isNotEmpty()) "Attacking now: " else "Last attacker: ") + name, pad)
+        label.setHighlight(name)
+        label.setHighlightColors(faction.baseUIColor)
     }
 
     override fun getStageTooltipImpl(stageId: Any): TooltipCreator? {

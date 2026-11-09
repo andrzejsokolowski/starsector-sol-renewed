@@ -43,7 +43,12 @@
 			"sr_saturn_belt": "graphics/planets/saturn_belt.png",
 		},
 		"events": {
-			"sr_crisis": "graphics/icons/crisis_sol.png"
+			"sr_crisis": "graphics/icons/crisis_sol.png",
+			"sr_crisis_START": "graphics/icons/crisis/stage_start.png",
+			"sr_crisis_FOOTHOLD": "graphics/icons/crisis/stage_foothold.png",
+			"sr_crisis_RAID": "graphics/icons/crisis/stage_raid.png",
+			"sr_crisis_ASSAULT": "graphics/icons/crisis/stage_assault.png",
+			"sr_crisis_RECKONING": "graphics/icons/crisis/stage_reckoning.png",
 		},
 		"warroom": {
 			"sr_icon_sol": "graphics/warroom/icon_sol.png",
