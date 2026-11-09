@@ -394,7 +394,7 @@ object Waves {
         return out.sortedBy { it.second }.map { it.first }
     }
 
-    private fun nearestPirateBase(sol: StarSystemAPI, rangeLY: Float): PirateBaseIntel? {
+    fun nearestPirateBase(sol: StarSystemAPI, rangeLY: Float): PirateBaseIntel? {
         var best: PirateBaseIntel? = null
         var bestDist = rangeLY
         for (i in Global.getSector().intelManager.getIntel(PirateBaseIntel::class.java)) {
@@ -409,7 +409,7 @@ object Waves {
         return best
     }
 
-    private fun nearestPatherBase(sol: StarSystemAPI, rangeLY: Float): LuddicPathBaseIntel? {
+    fun nearestPatherBase(sol: StarSystemAPI, rangeLY: Float): LuddicPathBaseIntel? {
         var best: LuddicPathBaseIntel? = null
         var bestDist = rangeLY
         for (i in Global.getSector().intelManager.getIntel(LuddicPathBaseIntel::class.java)) {

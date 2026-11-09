@@ -1,3 +1,9 @@
+Version 1.4.0 (2026-11-09)
+- New mission "The Deterrent", after the first Reckoning: three boss fleets each guard a Domain planetkiller (a pirate warlord at the pirate base near Sol, a Luddic Path relic fleet at the Pather base, a Remnant fleet at a new nexus near Neptune).
+- Each boss drops its planetkiller on the loot screen of the battle that destroys it. With all three, the attacks stop and the meter holds where it is.
+- A button on the mission card brings the attacks back, and stops them again, at any time.
+- The boss flagships can always be recovered. With Moar XIV, Ship and Weapon Pack or Blinding-class Super Battlecarrier installed, they are an Endless MKII, a Cathedral and a Blinding.
+
 Version 1.3.0 (2026-11-09)
 - The crisis now sends one attack per stage, each stronger than the last (50%, 75%, 100% and 150%), instead of up to three at once. Attacks are smaller overall.
 - Any of the Sector's factions can now invade Sol, modded ones too, except factions you stand at 30 or better with, your commission faction and the independents.

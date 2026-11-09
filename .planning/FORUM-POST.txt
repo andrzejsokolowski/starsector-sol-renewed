@@ -37,6 +37,9 @@ No radiation mechanic. Nothing here is a survey-and-forget rock.
 [li]Pirates and the Luddic Path set up bases nearby. Then every stage of the meter brings one attack, each stronger than the last: a raid, a strike force, a war fleet, an armada.[/li]
 [li]The attacker can be the pirates, the Luddic Path, the Remnants out of the nests in Sol itself, or one of the Sector's factions, modded ones included. Factions you are on good terms with stay out of it.[/li]
 [li]Survive the armada and the meter drops back and gets 1.5 times as long (up to 8000 points), but every attack after it is stronger.[/li]
+[li]The attacks never stop on their own. After the first Reckoning, three boss fleets each guard a Domain planetkiller: a pirate warlord, a Luddic Path relic fleet and a Remnant mind out by Neptune. Take all three and no one will strike at Sol again. Their flagships can always be recovered.[/li]
+[li]Would rather keep fighting? A button on the mission card brings the attacks back, and stops them again, whenever you like.[/li]
+[li]With Moar XIV, Ship and Weapon Pack or Blinding-class Super Battlecarrier installed, the bosses fly an Endless MKII, a Cathedral and a Blinding.[/li]
 [li]On, off, meter speed, attack strength and how much longer the meter gets are all in LunaSettings.[/li]
 [/list]
 [hr][center][size=12pt][b]What Is In The System[/b][/size][/center][hr]
@@ -79,6 +82,7 @@ The planet textures, star art, planet descriptions, the cryo-prison, the Centaur
 [/spoiler]
 
 [spoiler=Version log]
+1.4.0 - new mission "The Deterrent" after the first Reckoning: three boss fleets each guard a Domain planetkiller. Destroy all three and the attacks stop; a button on the mission card brings them back and stops them again at any time. The boss flagships can always be recovered.
 1.3.0 - the crisis now sends one attack per stage, each stronger than the last, instead of up to three at once, and attacks are smaller overall. Any of the Sector's factions can now invade Sol (modded ones too), except those you stand at 30 or better with. Pirates and Pathers come with fewer, better ships, and Remnant attacks are smaller. Big colonies now raise the meter far more than small ones (size 10 gives 100 a month, size 3 nothing), and industries count only their own build cost, much less than before. Every stage has its own picture, and the crisis texts are rewritten.
 1.2.1 - each Reckoning now makes the crisis meter 1.5 times as long instead of twice, and the meter stops growing at 8000 points instead of 64000.
 1.2.0 - every Reckoning you survive now makes the crisis meter and every mark on it twice as long, so the next attacks need twice the attention. Before, the marks never moved and a growing Sol was attacked more and more often. New LunaSettings option to change how much longer the meter gets (1 keeps the old fixed marks).

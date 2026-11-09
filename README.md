@@ -62,6 +62,17 @@ After the Reckoning the meter and every mark on it get 1.5 times as long (1500, 
 and so on, up to 8000), the meter drops back to the Raid mark and every later attack is stronger.
 LunaSettings: on/off, meter speed, attack strength, how much longer the meter gets per Reckoning.
 
+### The Deterrent
+
+After the first Reckoning, three boss fleets each guard a Domain planetkiller: the Sol Base Loot
+Armada at the pirate base near Sol, the Unholy Relic Purge Fleet at the Luddic Path base, and
+Origin Found at a new Remnant nexus near Neptune. Each one drops its planetkiller on the loot
+screen of the battle that destroys it, and its flagship can always be recovered. With all three,
+the attacks stop and the meter holds where it is. A button on the mission card brings the attacks
+back, and stops them again, at any time. The flagships come from Moar XIV (Endless MKII), Ship and Weapon Pack
+(Cathedral) and Blinding-class Super Battlecarrier (Blinding) when those are installed; otherwise
+each fleet's own biggest ship leads it. The boss fleets grow with the attack strength setting.
+
 ## Building
 
 `./gradlew jar` (needs `starsectorPath` in `gradle.properties`), then `python package.py` to stage

@@ -140,6 +140,8 @@ class CrisisIntel : BaseEventIntel() {
         }
 
         @JvmField val RESET_PARAM = Any()
+        @JvmField val DETERRED_PARAM = Any()
+        @JvmField val RESUMED_PARAM = Any()
 
         private val log = Global.getLogger(CrisisIntel::class.java)
 
@@ -233,6 +235,7 @@ class CrisisIntel : BaseEventIntel() {
             return
         }
         refresh(markets)
+        Deterrent.startIfDue(this)
     }
 
     private fun refresh(markets: List<MarketAPI>) {
@@ -250,7 +253,7 @@ class CrisisIntel : BaseEventIntel() {
 
     /** What the colonies or their industries add to the meter this month, after the pace setting. */
     fun monthly(ofIndustries: Boolean): Int {
-        if (!SrSettings.crisis || isEnding || isEnded) return 0
+        if (!SrSettings.crisis || isEnding || isEnded || Deterrent.isDeterred()) return 0
         return (shares(ofIndustries).sumOf { it.points.toDouble() } * SrSettings.crisisPace).roundToInt()
     }
 
@@ -277,12 +280,14 @@ class CrisisIntel : BaseEventIntel() {
         }
     }
 
+    /** Next queued attack once the last one is over; held while Sol's deterrent holds, sent when it lapses. */
     private fun pruneWaves() {
-        if (waves.isEmpty()) return
-        waves.removeAll { it.isEnded || it.isEnding }
-        if (waves.isNotEmpty()) return
-        if (reckoningActive) finishReckoning()
-        if (queued.isNotEmpty()) launch(queued.removeAt(0))
+        if (waves.isNotEmpty()) {
+            waves.removeAll { it.isEnded || it.isEnding }
+            if (waves.isNotEmpty()) return
+            if (reckoningActive) finishReckoning()
+        }
+        if (queued.isNotEmpty() && !Deterrent.isDeterred()) launch(queued.removeAt(0))
     }
 
     /**
@@ -295,7 +300,25 @@ class CrisisIntel : BaseEventIntel() {
         stretchAndDrop(this, lengthFor(cycles, SrSettings.crisisStretchNow()))
         Waves.ensureBases(this)
         sendUpdateIfPlayerHasIntel(RESET_PARAM, false)
+        Deterrent.startIfDue(this)
         log.info("[SolRenewed] Crisis: Reckoning over, cycle $cycles, meter now ${getMaxProgress()} long, back at ${getProgress()}")
+    }
+
+    /**
+     * Sol's deterrent holds (all three planetkillers, attacks switched off on the Deterrent card): the meter stops
+     * where it is and no new attack starts. Attacks already under way finish. [resume] picks it up again.
+     */
+    fun deter() {
+        if (isEnding || isEnded) return
+        sendUpdateIfPlayerHasIntel(DETERRED_PARAM, false)
+        log.info("[SolRenewed] Crisis: deterred, meter held at ${getProgress()}")
+    }
+
+    /** The player let the Sector forget: the meter climbs again from where it stopped. */
+    fun resume() {
+        if (isEnding || isEnded) return
+        sendUpdateIfPlayerHasIntel(RESUMED_PARAM, false)
+        log.info("[SolRenewed] Crisis: resumed at ${getProgress()}")
     }
 
     // -------------------------------------------------------------------- UI
@@ -340,6 +363,14 @@ class CrisisIntel : BaseEventIntel() {
             }
             return
         }
+        if (isUpdate && param === DETERRED_PARAM) {
+            info.addPara("No one will strike at Sol again", tc, initPad)
+            return
+        }
+        if (isUpdate && param === RESUMED_PARAM) {
+            info.addPara("The Sector has forgotten what Sol holds", tc, initPad)
+            return
+        }
         if (isUpdate && param === RESET_PARAM) {
             info.addPara("The attackers fall back, for now", tc, initPad)
             info.addPara("Attention on Sol: %s of %s", 0f, tc, h, "${getProgress()}", "${getMaxProgress()}")
@@ -347,7 +378,8 @@ class CrisisIntel : BaseEventIntel() {
         }
         if (!isUpdate) {
             info.addPara("Attention on Sol: %s of %s", initPad, tc, h, "${getProgress()}", "${getMaxProgress()}")
-            info.addPara("Rising %s a month", 0f, tc, h, "+$monthlyProgress")
+            if (Deterrent.isDeterred()) info.addPara("Sol's deterrent holds", tc, 0f)
+            else info.addPara("Rising %s a month", 0f, tc, h, "+$monthlyProgress")
             if (cycles > 0) info.addPara("Attacks %s stronger", 0f, tc, h, "+${escalationPercent()}%")
         }
     }
@@ -412,6 +444,9 @@ class CrisisIntel : BaseEventIntel() {
                         (if (SrSettings.crisisStretch > 1f) ", and they will come less often" else "") +
                         ". But they will not stop. Not until Sol has a deterrent.", opad
                 )
+                if (Deterrent.isDeterred()) {
+                    info.addPara("Now it has one. The Sector knows what Sol holds, and no fleet comes.", opad)
+                }
             }
             Stage.FOOTHOLD -> {
                 val label = info.addPara(
