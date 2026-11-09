@@ -82,6 +82,7 @@ The planet textures, star art, planet descriptions, the cryo-prison, the Centaur
 [/spoiler]
 
 [spoiler=Version log]
+1.4.1 - if a faction from another mod cannot be sent against Sol, the crisis logs it and picks another attacker instead of crashing the game; the same for the Deterrent bosses.
 1.4.0 - new mission "The Deterrent" after the first Reckoning: three boss fleets each guard a Domain planetkiller. Destroy all three and the attacks stop; a button on the mission card brings them back and stops them again at any time. The boss flagships can always be recovered.
 1.3.0 - the crisis now sends one attack per stage, each stronger than the last, instead of up to three at once, and attacks are smaller overall. Any of the Sector's factions can now invade Sol (modded ones too), except those you stand at 30 or better with. Pirates and Pathers come with fewer, better ships, and Remnant attacks are smaller. Big colonies now raise the meter far more than small ones (size 10 gives 100 a month, size 3 nothing), and industries count only their own build cost, much less than before. Every stage has its own picture, and the crisis texts are rewritten.
 1.2.1 - each Reckoning now makes the crisis meter 1.5 times as long instead of twice, and the meter stops growing at 8000 points instead of 64000.

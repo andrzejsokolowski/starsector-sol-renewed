@@ -85,7 +85,11 @@ object Deterrent {
     /** Called by the crisis every few days and after a Reckoning; covers saves that are past it already. */
     fun startIfDue(crisis: CrisisIntel) {
         if (!shouldStart(crisis.cycles, SrSettings.crisis, intel() != null, isDeterred())) return
-        DeterrentIntel.create(crisis)
+        try {
+            DeterrentIntel.create(crisis)
+        } catch (t: Throwable) {
+            Global.getLogger(Deterrent::class.java).error("[SolRenewed] Deterrent: could not start", t)
+        }
     }
 }
 
@@ -220,7 +224,16 @@ class DeterrentIntel : BaseIntelPlugin(), FleetEventListener {
         return fleet
     }
 
+    /** Runs every frame inside the game's loop, so nothing in it may throw. */
     override fun advanceImpl(amount: Float) {
+        try {
+            tick(amount)
+        } catch (t: Throwable) {
+            log.error("[SolRenewed] Deterrent: tick failed", t)
+        }
+    }
+
+    private fun tick(amount: Float) {
         val days = Global.getSector().clock.convertToDays(amount)
         interval.advance(days)
         if (!interval.intervalElapsed()) return
@@ -270,9 +283,14 @@ class DeterrentIntel : BaseIntelPlugin(), FleetEventListener {
         val battle = param as? BattleAPI
         step.done = true
         step.fleet = null
-        if (battle == null || !battle.isPlayerInvolved) leaveInWreckage(fleet)
         log.info("[SolRenewed] Deterrent: ${step.boss} boss destroyed, ${recovered()} of ${steps.size}")
-        if (allDone()) finish() else sendUpdateIfPlayerHasIntel(step, false)
+        // Called from the end of a battle: a failure here must not take the game down with it.
+        try {
+            if (battle == null || !battle.isPlayerInvolved) leaveInWreckage(fleet)
+            if (allDone()) finish() else sendUpdateIfPlayerHasIntel(step, false)
+        } catch (t: Throwable) {
+            log.error("[SolRenewed] Deterrent: could not finish the ${step.boss} step", t)
+        }
     }
 
     override fun reportBattleOccurred(fleet: CampaignFleetAPI?, primaryWinner: CampaignFleetAPI?, battle: BattleAPI?) {}

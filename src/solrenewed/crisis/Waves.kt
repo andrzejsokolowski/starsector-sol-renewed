@@ -85,7 +85,12 @@ object Waves {
         if (targets.isEmpty()) return emptyList()
         val random = Random(intel.getRandom().nextLong())
         val points = budget(CrisisIntel.Stage.FOOTHOLD, Factions.PIRATES, intel.strengthMult())
-        val raid = pirateRaid(sol, targets, split(points, 5, 10, random), random) ?: return emptyList()
+        val raid = try {
+            pirateRaid(sol, targets, split(points, 5, 10, random), random)
+        } catch (t: Throwable) {
+            log.error("[SolRenewed] Crisis FOOTHOLD: the pirate raid could not be sent", t)
+            null
+        } ?: return emptyList()
         intel.noteWave(CrisisIntel.Stage.FOOTHOLD, Factions.PIRATES)
         log.info("[SolRenewed] Crisis FOOTHOLD: pirates, $points points")
         return listOf(raid)
@@ -102,11 +107,17 @@ object Waves {
         while (!picker.isEmpty) {
             val faction = picker.pickAndRemove() ?: break
             val points = budget(stage, faction, strength)
-            val fgi = when (faction) {
-                Factions.PIRATES -> pirateRaid(sol, targets, split(points, 5, 10, random), random)
-                Factions.LUDDIC_PATH -> patherStrike(sol, targets, split(points, 5, 10, random), random)
-                Factions.REMNANTS -> remnantStrike(sol, targets, remnantSizes(points, random), random)
-                else -> invasion(faction, sol, targets, split(points, 5, 10, random), random)
+            // A faction from another mod can fail in ways no test here sees: log it and pick the next attacker.
+            val fgi = try {
+                when (faction) {
+                    Factions.PIRATES -> pirateRaid(sol, targets, split(points, 5, 10, random), random)
+                    Factions.LUDDIC_PATH -> patherStrike(sol, targets, split(points, 5, 10, random), random)
+                    Factions.REMNANTS -> remnantStrike(sol, targets, remnantSizes(points, random), random)
+                    else -> invasion(faction, sol, targets, split(points, 5, 10, random), random)
+                }
+            } catch (t: Throwable) {
+                log.error("[SolRenewed] Crisis ${stage.name}: $faction could not be sent, trying another attacker", t)
+                null
             }
             if (fgi != null) {
                 intel.noteWave(stage, faction)
@@ -128,7 +139,12 @@ object Waves {
         val interest = targets.maxOf { LuddicPathBaseManager.getLuddicPathMarketInterest(it) }
         weights[Factions.LUDDIC_PATH] = 1f + interest / 10f
         weights[Factions.REMNANTS] = min(4f, 1f + nests(sol).size)
-        val invaders = invaders()
+        val invaders = try {
+            invaders()
+        } catch (t: Throwable) {
+            log.error("[SolRenewed] Crisis: could not list the factions that may invade; only pirates, Path and Remnants this time", t)
+            emptyList()
+        }
         val sum = invaders.sumOf { invaderWeight(it).toDouble() }.toFloat()
         val scale = if (sum > INVADERS_WEIGHT) INVADERS_WEIGHT / sum else 1f
         for (f in invaders) weights[f.id] = invaderWeight(f) * scale
