@@ -51,6 +51,24 @@ public class DeterrentRegressionTest {
         check(item.contains("no_sell") && item.contains("no_drop"), "It cannot be sold and never drops at random");
         check(item.contains(",3,1,"), "Three fit in one stack");
 
+        // The game reads "order" as a number for every special item and stops at start on an empty one.
+        List<List<String>> rows = csv(Files.readString(root.resolve("data/campaign/special_items.csv")));
+        int order = rows.get(0).indexOf("order");
+        check(order >= 0, "special_items.csv has an order column");
+        for (List<String> row : rows.subList(1, rows.size())) {
+            String id = row.size() > 1 ? row.get(1).trim() : "";
+            if (id.isEmpty() || row.get(0).trim().startsWith("#")) continue;
+            String value = row.size() > order ? row.get(order).trim() : "";
+            boolean number;
+            try {
+                Double.parseDouble(value);
+                number = true;
+            } catch (NumberFormatException e) {
+                number = false;
+            }
+            check(number, "Special item " + id + " has a number in its order column (has \"" + value + "\")");
+        }
+
         Path core = Path.of(Global.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent();
         check(Files.exists(core.resolve("graphics/icons/cargo/planetkiller.png")), "Its picture is the game's own planetkiller icon");
         for (String n : List.of("start", "foothold", "raid", "assault", "reckoning")) {
@@ -79,5 +97,29 @@ public class DeterrentRegressionTest {
     private static void check(boolean condition, String label) {
         if (!condition) throw new AssertionError(label);
         checks++;
+    }
+
+    /** Splits CSV text into rows of fields; quoted fields may hold commas, quotes and line breaks. */
+    private static List<List<String>> csv(String text) {
+        List<List<String>> rows = new java.util.ArrayList<>();
+        List<String> row = new java.util.ArrayList<>();
+        StringBuilder field = new StringBuilder();
+        boolean quoted = false;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (quoted) {
+                if (c == '"' && i + 1 < text.length() && text.charAt(i + 1) == '"') { field.append('"'); i++; }
+                else if (c == '"') quoted = false;
+                else field.append(c);
+            } else if (c == '"') quoted = true;
+            else if (c == ',') { row.add(field.toString()); field.setLength(0); }
+            else if (c == '\n' || c == '\r') {
+                if (c == '\r' && i + 1 < text.length() && text.charAt(i + 1) == '\n') i++;
+                row.add(field.toString()); field.setLength(0);
+                rows.add(row); row = new java.util.ArrayList<>();
+            } else field.append(c);
+        }
+        if (field.length() > 0 || !row.isEmpty()) { row.add(field.toString()); rows.add(row); }
+        return rows;
     }
 }

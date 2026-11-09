@@ -1,3 +1,6 @@
+Version 1.4.2 (2026-11-10)
+- Fixed the game stopping at start with "JSONObject["order"] is not a number": the Domain Planetkiller item was missing its sort order.
+
 Version 1.4.1 (2026-11-09)
 - If a faction from another mod cannot be sent against Sol, the crisis logs it and picks another attacker instead of crashing the game. The same goes for errors while placing the Deterrent bosses or after one of them dies.
 
