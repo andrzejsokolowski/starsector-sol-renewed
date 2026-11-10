@@ -1,3 +1,6 @@
+Version 1.4.3 (2026-11-10)
+- New gold icon in mod managers (TriOS) and in LunaLib's settings.
+
 Version 1.4.2 (2026-11-10)
 - Fixed the game stopping at start with "JSONObject["order"] is not a number": the Domain Planetkiller item was missing its sort order.
 
